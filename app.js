@@ -206,7 +206,8 @@ function updateControlUI(controlId, activeValue) {
 
         options.forEach(opt => {
             const isActive = opt.getAttribute('data-value') === activeValue;
-            opt.style.color = isActive ? 'var(--bg-color)' : 'var(--text-secondary)';
+            opt.style.color = isActive ? 'var(--text-primary)' : 'var(--text-secondary)';
+            opt.style.fontWeight = isActive ? '800' : '600';
         });
     }
 }

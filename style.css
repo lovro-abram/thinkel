@@ -1,8 +1,8 @@
 :root {
     /* Dark Theme (Default) */
     --bg-color: #143028;
-    --surface-color: #1f4539;
-    --surface-light: #2a5e4d;
+    --surface-color: rgba(31, 69, 57, 0.7);
+    --surface-light: rgba(42, 94, 77, 0.8);
     --accent-color: #81C784;
     --accent-gold: #C27C2E;
     --text-primary: #E0E2E0;
@@ -12,7 +12,7 @@
     --radius-xl: 30px;
     --radius-md: 16px;
     --radius-sm: 8px;
-    --shadow-soft: 0 10px 30px rgba(0,0,0,0.3);
+    --shadow-soft: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     
     --font-quote: 'Playfair Display', serif;
     --font-ui: 'Lato', sans-serif;
@@ -22,17 +22,22 @@
     --quote-font-size: 1.6rem;
     
     --safe-area-bottom: env(safe-area-inset-bottom, 20px);
+
+    --glass-blur: 20px;
+    --glass-border: 1px solid rgba(255, 255, 255, 0.22);
 }
 
-/* Light Theme */
+/* Light Theme - Redesigned for compatibility with green background */
 body.light-theme {
-    --bg-color: #f4f6f8;
-    --surface-color: #ffffff;
-    --surface-light: #e0e5eb;
-    --accent-color: #2e7d32;
-    --text-primary: #2c3e50;
-    --text-secondary: #7f8c8d;
-    --shadow-soft: 0 10px 30px rgba(0,0,0,0.08);
+    --bg-color: #E8F5E9;
+    --surface-color: rgba(255, 255, 255, 0.5);
+    --surface-light: rgba(255, 255, 255, 0.7);
+    --accent-color: #2E7D32;
+    --accent-gold: #C27C2E;
+    --text-primary: #1B5E20;
+    --text-secondary: #4E7E52;
+    --shadow-soft: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.45);
 }
 
 /* === RESET & BASE === */
@@ -50,13 +55,30 @@ body {
     margin: 0;
     padding: 0;
     font-family: var(--font-ui);
-    background-color: var(--bg-color);
+    background: url('background.svg') no-repeat center center fixed;
+    background-size: cover;
     color: var(--text-primary);
     height: 100vh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     transition: background-color 0.3s, color 0.3s;
+}
+
+/* Base overlay to ensure readability if needed, but we want glass effect */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: -1;
+}
+
+body.light-theme::before {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 /* === CONTAINER === */
@@ -78,11 +100,17 @@ header {
 
 h1 {
     margin: 0;
-    font-size: 1.2rem;
-    letter-spacing: 1px;
-    color: var(--accent-color);
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    color: var(--text-primary);
     text-transform: uppercase;
-    font-weight: 700;
+    font-weight: 800;
+    text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+body.light-theme h1 {
+    color: var(--accent-color);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .back-btn {
@@ -91,7 +119,9 @@ h1 {
     top: 50%;
     transform: translateY(-50%);
     background: var(--surface-light);
-    border: none;
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: var(--glass-border);
     color: var(--text-primary);
     width: 44px;
     height: 44px;
@@ -101,7 +131,7 @@ h1 {
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-soft);
 }
 
 .back-btn.show {
@@ -148,28 +178,21 @@ main::-webkit-scrollbar {
 /* === CARDS === */
 .card {
     background: var(--surface-color);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     border-radius: var(--radius-xl);
     padding: 30px;
     margin-bottom: 20px;
     box-shadow: var(--shadow-soft);
-    border: 1px solid rgba(255,255,255,0.05);
+    border: var(--glass-border);
     position: relative;
-}
-
-body.light-theme .card {
-    border: 1px solid rgba(0,0,0,0.05);
 }
 
 /* === DATE CARD === */
 .date-card {
     padding: 12px 20px;
     text-align: center;
-    border: 1px solid var(--surface-light);
-    background: linear-gradient(90deg, rgba(129, 199, 132, 0.1) 0%, rgba(129, 199, 132, 0) 100%);
-}
-
-body.light-theme .date-card {
-    background: linear-gradient(90deg, rgba(46, 125, 50, 0.05) 0%, rgba(46, 125, 50, 0) 100%);
+    background: var(--surface-light);
 }
 
 .date-picker-btn {
@@ -177,8 +200,8 @@ body.light-theme .date-card {
     left: 15px;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.05);
-    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--text-secondary);
     width: 36px;
     height: 36px;
@@ -193,7 +216,22 @@ body.light-theme .date-card {
 
 .date-picker-btn:active {
     transform: translateY(-50%) scale(0.9);
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.2);
+}
+
+.glass-btn-close {
+    top: 15px;
+    right: 15px;
+    left: auto;
+    transform: none;
+    background: var(--surface-light);
+    border: var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+.glass-btn-close:active {
+    transform: scale(0.9);
 }
 
 .date-content {
@@ -226,6 +264,7 @@ body.light-theme .date-card {
     margin-bottom: 20px;
     color: var(--text-primary);
     transition: font-size 0.2s;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .quote-author {
@@ -246,7 +285,9 @@ body.light-theme .date-card {
 
 .action-btn {
     background: var(--surface-light);
-    border: none;
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: var(--glass-border);
     color: var(--text-primary);
     height: 44px;
     border-radius: 14px;
@@ -264,12 +305,21 @@ body.light-theme .date-card {
 
 .action-btn.primary {
     background: var(--accent-color);
-    color: var(--bg-color);
+    opacity: 0.85;
+    color: white;
+    border: var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+body.light-theme .action-btn.primary {
+    color: white;
+    background: var(--accent-color);
 }
 
 .action-btn.fav.active {
     color: var(--danger);
-    background: rgba(229, 115, 115, 0.1);
+    background: rgba(229, 115, 115, 0.2);
 }
 
 .action-btn .material-icons-round {
@@ -300,7 +350,7 @@ body.light-theme .date-card {
     gap: 10px;
     margin-top: 15px;
     padding-top: 15px;
-    border-top: 1px solid var(--surface-light);
+    border-top: 1px solid rgba(255,255,255,0.1);
     animation: fadeIn 0.2s ease-out;
 }
 
@@ -308,7 +358,7 @@ body.light-theme .date-card {
 .search-container {
     position: sticky;
     top: 0;
-    background: var(--bg-color);
+    /* background: var(--bg-color); Removed to keep transparency */
     padding: 10px 0 20px 0;
     z-index: 5;
     margin-bottom: 10px;
@@ -332,13 +382,16 @@ body.light-theme .date-card {
     width: 100%;
     padding: 12px 12px 12px 45px;
     border-radius: var(--radius-md);
-    border: 1px solid var(--surface-light);
+    border: var(--glass-border);
     background: var(--surface-color);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     color: var(--text-primary);
     font-family: var(--font-ui);
     font-size: 1rem;
     outline: none;
     transition: border-color 0.2s;
+    box-shadow: var(--shadow-soft);
 }
 
 .search-input:focus {
@@ -356,7 +409,10 @@ body.light-theme .date-card {
     flex: 1;
     padding: 12px;
     text-align: center;
-    background: var(--surface-light);
+    background: var(--surface-color);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: var(--glass-border);
     border-radius: 50px;
     cursor: pointer;
     color: var(--text-secondary);
@@ -367,11 +423,16 @@ body.light-theme .date-card {
     align-items: center;
     justify-content: center;
     gap: 6px;
+    box-shadow: var(--shadow-soft);
 }
 
 .saved-tab.active {
     background: var(--accent-color);
-    color: var(--bg-color);
+    opacity: 0.9;
+    color: white;
+    border: var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 
 .saved-tab .material-icons-round {
@@ -380,12 +441,15 @@ body.light-theme .date-card {
 
 .fav-item, .note-item {
     background: var(--surface-color);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: var(--glass-border);
     padding: 20px;
     border-radius: var(--radius-md);
     margin-bottom: 15px;
     display: block;
     transition: transform 0.2s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: var(--shadow-soft);
     position: relative;
 }
 
@@ -450,11 +514,15 @@ body.light-theme .date-card {
 
 .segment-control {
     background: var(--surface-light);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: var(--glass-border);
     padding: 5px;
     border-radius: 50px;
     display: flex;
     position: relative;
     gap: 4px;
+    box-shadow: var(--shadow-soft);
 }
 
 .segment-pill {
@@ -462,11 +530,19 @@ body.light-theme .date-card {
     top: 5px;
     bottom: 5px;
     left: 0;
-    background: var(--text-primary);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 25px;
     z-index: 1;
     transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+body.light-theme .segment-pill {
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .segment-opt {
@@ -606,11 +682,15 @@ body.light-theme #quote-overlay {
     justify-content: center;
     min-height: 300px;
     border: 2px dashed var(--surface-light);
+    background: var(--surface-color);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     cursor: pointer;
     transition: all 0.2s;
     border-radius: var(--radius-xl);
     width: 100%;
     max-width: 400px;
+    box-shadow: var(--shadow-soft);
 }
 
 #upload-card:hover {
@@ -722,7 +802,9 @@ input[type="range"]::-moz-range-thumb {
 
 .align-btn {
     background: var(--surface-light);
-    border: none;
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: var(--glass-border);
     color: var(--text-primary);
     width: 44px;
     height: 44px;
@@ -738,6 +820,7 @@ input[type="range"]::-moz-range-thumb {
 .align-btn.active {
     background: var(--accent-color);
     color: var(--bg-color);
+    border: none;
 }
 
 .align-btn:active {
@@ -747,7 +830,9 @@ input[type="range"]::-moz-range-thumb {
 /* === BUTTONS === */
 .btn {
     background: var(--surface-light);
-    border: none;
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: var(--glass-border);
     color: var(--text-primary);
     padding: 12px 20px;
     border-radius: var(--radius-md);
@@ -761,6 +846,7 @@ input[type="range"]::-moz-range-thumb {
     gap: 8px;
     transition: all 0.2s ease;
     text-decoration: none;
+    box-shadow: var(--shadow-soft);
 }
 
 .btn:active {
@@ -769,22 +855,23 @@ input[type="range"]::-moz-range-thumb {
 
 .btn-primary {
     background: var(--accent-color);
-    color: var(--bg-color);
+    opacity: 0.9;
+    color: white;
     width: 100%;
+    border: var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 
 .btn-danger {
     background: var(--danger);
     color: white;
+    border: none;
 }
 
 .btn-secondary {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.15);
     color: var(--text-primary);
-}
-
-body.light-theme .btn-secondary {
-    background: rgba(0,0,0,0.05);
 }
 
 .btn-icon-only {
@@ -802,10 +889,10 @@ body.light-theme .btn-secondary {
     width: 100%;
     padding-bottom: calc(12px + var(--safe-area-bottom));
     padding-top: 12px;
-    background: rgba(31, 69, 57, 0.6);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-top: 1px solid rgba(255,255,255,0.15);
+    background: var(--surface-color);
+    backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+    border-top: var(--glass-border);
     box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
     display: flex;
     justify-content: space-around;
@@ -822,12 +909,7 @@ body.light-theme .btn-secondary {
     right: 0;
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-    opacity: 0.6;
-}
-
-body.light-theme .bottom-nav {
-    background: rgba(255, 255, 255, 0.65);
-    border-top: 1px solid rgba(255, 255, 255, 0.8);
+    opacity: 0.4;
 }
 
 .nav-item {
@@ -871,8 +953,9 @@ body.light-theme .bottom-nav {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -890,6 +973,8 @@ body.light-theme .bottom-nav {
 
 .modal-card {
     background: var(--surface-color);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     width: 90%;
     max-width: 400px;
     max-height: 80vh;
@@ -898,10 +983,11 @@ body.light-theme .bottom-nav {
     text-align: left;
     transform: scale(0.9);
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: var(--glass-border);
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
+    box-shadow: var(--shadow-soft);
 }
 
 .modal-overlay.open .modal-card {
@@ -936,7 +1022,7 @@ body.light-theme .bottom-nav {
 }
 
 body.light-theme .modal-quote-ref {
-    background: rgba(0,0,0,0.05);
+    background: rgba(255,255,255,0.2);
 }
 
 .modal-quote-text {
@@ -956,7 +1042,7 @@ body.light-theme .modal-quote-ref {
 
 .modal-note-area {
     width: 100%;
-    background: rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.1);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: var(--radius-md);
     color: var(--text-primary);
@@ -975,7 +1061,8 @@ body.light-theme .modal-quote-ref {
 }
 
 body.light-theme .modal-note-area {
-    background: rgba(0,0,0,0.05);
+    background: rgba(255,255,255,0.3);
+    border: 1px solid rgba(0,0,0,0.1);
 }
 
 /* === TOAST === */
@@ -984,7 +1071,9 @@ body.light-theme .modal-note-area {
     top: 20px;
     left: 50%;
     transform: translateX(-50%) translateY(-100px);
-    background: var(--surface-light);
+    background: var(--surface-color);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     color: var(--text-primary);
     padding: 12px 24px;
     border-radius: 50px;
@@ -997,12 +1086,7 @@ body.light-theme .modal-note-area {
     transition: all 0.3s;
     font-size: 0.9rem;
     white-space: nowrap;
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-body.light-theme .toast {
-    background: #fff;
-    border: 1px solid #eee;
+    border: var(--glass-border);
 }
 
 .toast.show {
@@ -1017,33 +1101,16 @@ body.light-theme .toast {
 /* === DESKTOP === */
 @media (min-width: 600px) {
     body {
-        background-color: var(--bg-color);
         display: flex;
         align-items: center;
         justify-content: center;
     }
     
-    body.light-theme {
-        background-color: #f0f2f5;
-    }
-    
     #app-container {
         width: 100%;
-        /* Povečana širina za namizja, da izkoristi prostor */
         max-width: 650px; 
-        height: 100vh; /* Polna višina zaslona */
-        
-        /* Odstranjeni so elementi, ki ustvarjajo videz telefona */
-        border-radius: 0;
-        border: none;
-        box-shadow: none;
-        
+        height: 100vh;
         overflow: hidden;
-    }
-    
-    /* Odstranimo posebne nastavitve za okvir v svetlem načinu */
-    body.light-theme #app-container {
-        border: none;
     }
     
     .bottom-nav {
@@ -1051,58 +1118,53 @@ body.light-theme .toast {
         width: 100%;
         left: 0;
     }
-    
-    .image-section {
-        height: 45vh;
-    }
 }
 
-/* Wallpaper editor styles */
-#wallpaper-page .bottom-nav {
-    display: none !important;
+/* Wallpaper editor overrides for glassmorphism */
+#wallpaper-page #app-container {
+    background: transparent;
 }
 
-.back-btn.wallpaper-back {
-    position: fixed;
-    left: 20px;
-    top: 20px;
-    z-index: 1001;
-    background: var(--surface-light);
-    border: none;
-    color: var(--text-primary);
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+#wallpaper-page .preview-section {
+    background: var(--surface-color);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: var(--glass-border);
 }
 
-.back-btn.wallpaper-back:active {
-    transform: scale(0.95);
+#wallpaper-page .control-group {
+    background: var(--surface-color);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: var(--glass-border);
 }
 
-@media (max-width: 599px) {
-    .back-btn.wallpaper-back {
-        left: 15px;
-        top: 15px;
-        width: 40px;
-        height: 40px;
-    }
+#wallpaper-page .font-option {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Desktop frame for wallpaper preview */
-@media (min-width: 600px) {
-    .preview-card {
-        border: 8px solid #2a5e4d;
-        border-radius: calc(var(--radius-xl) + 8px);
-        margin: 20px;
-    }
-    
-    body.light-theme .preview-card {
-        border-color: #cbd5e1;
-    }
+#wallpaper-page .font-option.active {
+    background: rgba(129, 199, 132, 0.3);
+    border-color: var(--accent-color);
+}
+
+#wallpaper-page .align-btn {
+    background: rgba(255,255,255,0.1);
+}
+
+#wallpaper-page .align-btn.active {
+    background: var(--accent-color);
+}
+
+#wallpaper-page .color-modal-card {
+    background: var(--surface-color);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: var(--glass-border);
+}
+
+#wallpaper-page .close-color-modal {
+    background: var(--accent-color);
+    color: var(--bg-color);
 }
