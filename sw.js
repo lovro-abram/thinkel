@@ -1,4 +1,4 @@
-const CACHE_NAME = 'thinkel-v9';
+const CACHE_NAME = 'thinkel-v10';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -44,16 +44,17 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch: stale-while-revalidate
-// Serve from cache immediately (if available) and refresh the cache
-// in the background so the next visit gets the fresh version.
+// Fetch: stale-while-revalidate with explicit redirect following
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
 
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
-      const fetchPromise = fetch(request).then((networkResponse) => {
+      // Ustvarimo nov zahtevki objekt z nastavitvijo redirect: 'follow', da preprečimo ERR_FAILED ob preusmeritvah
+      const networkRequest = new Request(request, { redirect: 'follow' });
+
+      const fetchPromise = fetch(networkRequest).then((networkResponse) => {
         if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
