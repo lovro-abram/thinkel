@@ -1,4 +1,4 @@
-const CACHE_NAME = 'thinkel-v10';
+const CACHE_NAME = 'thinkel-v11';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -28,7 +28,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate: clean up old cache versions
+// Activate: clean up old cache versions & force control immediately
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -44,26 +44,43 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch: stale-while-revalidate with explicit redirect following
+// Fetch: varan stale-while-revalidate z obravnavo preusmeritev
 self.addEventListener('fetch', (event) => {
   const { request } = event;
+
+  // Obravnavamo samo GET zahteve
   if (request.method !== 'GET') return;
 
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
-      // Ustvarimo nov zahtevki objekt z nastavitvijo redirect: 'follow', da preprečimo ERR_FAILED ob preusmeritvah
-      const networkRequest = new Request(request, { redirect: 'follow' });
+      const fetchPromise = fetch(request)
+        .then(async (networkResponse) => {
+          // Če je strežnik vrnil preusmeritev (redirected), pridobimo končni URL
+          if (networkResponse.redirected) {
+            const redirectedResponse = await fetch(networkResponse.url);
+            if (redirectedResponse.ok) {
+              const cache = await caches.open(CACHE_NAME);
+              cache.put(request, redirectedResponse.clone());
+            }
+            return redirectedResponse;
+          }
 
-      const fetchPromise = fetch(networkRequest).then((networkResponse) => {
-        if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(request, responseToCache);
-          });
-        }
-        return networkResponse;
-      }).catch(() => cachedResponse);
+          // Shranimo le veljavne standardne odzive (200 OK)
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, responseToCache);
+            });
+          }
 
+          return networkResponse;
+        })
+        .catch(() => {
+          // V primeru omrežne napake vrnemo predpomnjeno verzijo
+          return cachedResponse;
+        });
+
+      // Vrnemo cachedResponse takoj če obstaja, sicer počakamo na networkResponse
       return cachedResponse || fetchPromise;
     })
   );
