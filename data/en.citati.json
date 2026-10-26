@@ -1,0 +1,357 @@
+{
+  "citati": [
+    {
+      "id": 1,
+      "text": "You can't change someone. You can try to understand them, watch them, and listen to them. When you understand them, you can help them to change.",
+      "author": "Thinkel",
+      "category": "change",
+      "tags": ["understanding", "relationships", "empathy"]
+    },
+    {
+      "id": 2,
+      "text": "The unexamined life is not worth living.",
+      "author": "Socrates",
+      "category": "wisdom",
+      "tags": ["self-examination", "life", "wisdom"]
+    },
+    {
+      "id": 3,
+      "text": "Watch people carefully. You'll notice if someone is hiding something. Whether they want to or not, their behavior will give them away.",
+      "author": "Thinkel",
+      "category": "relationships",
+      "tags": ["observation", "behavior", "secrets"]
+    },
+    {
+      "id": 4,
+      "text": "Don't mindlessly resist other people's ideas. Try to understand them. Maybe they want to show you something that you don't notice yourself.",
+      "author": "Thinkel",
+      "category": "wisdom",
+      "tags": ["ideas", "openness", "understanding"]
+    },
+    {
+      "id": 5,
+      "text": "The beginning is the most important part of the work.",
+      "author": "Plato",
+      "category": "action",
+      "tags": ["beginning", "work", "importance"]
+    },
+    {
+      "id": 6,
+      "text": "You can't control everyone and everything, you can only control yourself. And that's more than enough.",
+      "author": "after Epictetus",
+      "category": "calm",
+      "tags": ["control", "acceptance", "stoicism"],
+      "source": "Enchiridion",
+      "source_type": "book",
+      "year": 135
+    },
+    {
+      "id": 7,
+      "text": "The roots of education are bitter, but the fruit is sweet.",
+      "author": "Aristotle",
+      "category": "education",
+      "tags": ["education", "learning", "patience"]
+    },
+    {
+      "id": 8,
+      "text": "It doesn't matter how hard you are trying, there is always someone who is better than you. Don't compare yourself with others at any cost.",
+      "author": "Unknown",
+      "category": "self-image",
+      "tags": ["comparison", "effort", "self-worth"]
+    },
+    {
+      "id": 9,
+      "text": "Do not spoil what you have by desiring what you have not; remember that what you now have was once among the things you only hoped for.",
+      "author": "Epicurus",
+      "category": "gratitude",
+      "tags": ["gratitude", "desire", "contentment"]
+    },
+    {
+      "id": 10,
+      "text": "No man ever steps in the same river twice, for it's not the same river and he's not the same man.",
+      "author": "Heraclitus",
+      "category": "change",
+      "tags": ["change", "impermanence", "flow"]
+    },
+    {
+      "id": 11,
+      "text": "Because you speak the truth, they will oppose you, they will shame you. But at all costs, speak and do what is right. Don't care what others think of you.",
+      "author": "after Kent M. Keith",
+      "category": "truth",
+      "tags": ["honesty", "integrity", "courage"],
+      "source": "The Paradoxical Commandments",
+      "source_type": "book",
+      "year": 1968
+    },
+    {
+      "id": 12,
+      "text": "You can't win a war. In a war, someone loses a lot and someone loses a little less (but both lose).",
+      "author": "after Brock Chisholm",
+      "category": "calm",
+      "tags": ["war", "loss", "peace"]
+    },
+    {
+      "id": 13,
+      "text": "Most people will treat you as you treat them. They are like mirrors that reflect you.",
+      "author": "Unknown",
+      "category": "relationships",
+      "tags": ["mirroring", "kindness", "expectations"]
+    },
+    {
+      "id": 14,
+      "text": "What you criticize most in others is actually what bothers you about yourself. Watch yourself.",
+      "author": "after Carl Jung",
+      "category": "self-image",
+      "tags": ["criticism", "shadow", "self-awareness"]
+    },
+    {
+      "id": 15,
+      "text": "It is not important who you are. Important is what you do.",
+      "author": "Unknown",
+      "category": "identity",
+      "tags": ["actions", "character", "values"],
+      "source": "Batman Begins",
+      "source_type": "movie",
+      "year": 2005
+    },
+    {
+      "id": 16,
+      "text": "Safety is an illusion. Growth lives in the unknown, because the greatest risks hide the brightest rewards.",
+      "author": "Thinkel",
+      "category": "growth",
+      "tags": ["risk", "unknown", "reward"]
+    },
+    {
+      "id": 17,
+      "text": "With patience, all 'dragons' can be trained.",
+      "author": "after How to Train Your Dragon",
+      "category": "perseverance",
+      "tags": ["patience", "discipline", "dragons"],
+      "source": "How to Train Your Dragon",
+      "source_type": "movie",
+      "year": 2010
+    },
+    {
+      "id": 18,
+      "text": "Happiness resides not in possessions, and not in gold; happiness dwells in the soul.",
+      "author": "Democritus",
+      "category": "happiness",
+      "tags": ["happiness", "soul", "wealth"]
+    },
+    {
+      "id": 19,
+      "text": "You can't change what others do. But you can decide how to respond. Their actions are not your burden, they're your raw material.",
+      "author": "after Epictetus",
+      "category": "calm",
+      "tags": ["response", "control", "stoicism"],
+      "source": "Enchiridion",
+      "source_type": "book",
+      "year": 135
+    },
+    {
+      "id": 20,
+      "text": "It's never too late!",
+      "author": "Unknown",
+      "category": "hope",
+      "tags": ["late", "change", "new start"]
+    },
+    {
+      "id": 21,
+      "text": "Panic steals time and solves nothing. Stay calm, clarity is your strongest tool.",
+      "author": "Thinkel",
+      "category": "calm",
+      "tags": ["panic", "clarity", "calmness"]
+    },
+    {
+      "id": 22,
+      "text": "Sooner is always better.",
+      "author": "Unknown",
+      "category": "time",
+      "tags": ["speed", "decisions", "urgency"]
+    },
+    {
+      "id": 23,
+      "text": "It is all about trust.",
+      "author": "Thinkel",
+      "category": "trust",
+      "tags": ["trust", "relationships", "foundation"]
+    },
+    {
+      "id": 24,
+      "text": "The greatest happiness is the awareness of being loved.",
+      "author": "John Bosco",
+      "category": "love",
+      "tags": ["love", "treasure", "precious"]
+    },
+    {
+      "id": 25,
+      "text": "Expect the unexpected.",
+      "author": "after Heraclitus",
+      "category": "wisdom",
+      "tags": ["unexpected", "openness", "surprise"]
+    },
+    {
+      "id": 26,
+      "text": "Tomorrow is another day.",
+      "author": "after Margaret Mitchell",
+      "category": "hope",
+      "tags": ["tomorrow", "hope", "new start"],
+      "source": "Gone with the Wind",
+      "source_type": "book",
+      "year": 1936
+    },
+    {
+      "id": 27,
+      "text": "Some things are more important than winning or being better than others.",
+      "author": "Thinkel",
+      "category": "competition",
+      "tags": ["winning", "values", "perspective"]
+    },
+    {
+      "id": 28,
+      "text": "Our past is a shadow we cannot outrun. But when it catches up, we must stand tall and learn from its whispers.",
+      "author": "Thinkel",
+      "category": "change",
+      "tags": ["past", "learning", "shadow"]
+    },
+    {
+      "id": 29,
+      "text": "Sometimes the crazy way is the only way.",
+      "author": "Thinkel",
+      "category": "courage",
+      "tags": ["risk", "unconventional", "boldness"]
+    },
+    {
+      "id": 30,
+      "text": "He has the most who is most content with the least.",
+      "author": "Diogenes",
+      "category": "contentment",
+      "tags": ["simplicity", "contentment", "minimalism"]
+    },
+    {
+      "id": 31,
+      "text": "Most people are afraid of things because they don't understand them.",
+      "author": "Unknown",
+      "category": "fear",
+      "tags": ["unknown", "understanding", "fear"],
+      "source": "How to Train Your Dragon",
+      "source_type": "movie",
+      "year": 2010
+    },
+    {
+      "id": 32,
+      "text": "Often, defense is the best offense.",
+      "author": "Unknown",
+      "category": "competition",
+      "tags": ["defense", "attack", "strategy"]
+    },
+    {
+      "id": 33,
+      "text": "Having courage isn't the same as having no fear. It's being afraid and pushing forward anyway, whatever that means.",
+      "author": "Unknown",
+      "category": "courage",
+      "tags": ["courage", "fear", "forward"],
+      "source": "Dragons: Riders of Berk",
+      "source_type": "series",
+      "year": 2013
+    },
+    {
+      "id": 34,
+      "text": "They laughed at me because I'm different. I laugh at them because they're all the same.",
+      "author": "Kurt Cobain",
+      "category": "identity",
+      "tags": ["difference", "individuality", "conformity"]
+    },
+    {
+      "id": 35,
+      "text": "Silence is better than unmeaning words.",
+      "author": "Pythagoras",
+      "category": "wisdom",
+      "tags": ["silence", "speech", "wisdom"]
+    },
+    {
+      "id": 36,
+      "text": "All are marked by a weakness... some just hide it better.",
+      "author": "Thinkel",
+      "category": "identity",
+      "tags": ["weakness", "hiding", "vulnerability"]
+    },
+    {
+      "id": 37,
+      "text": "The most difficult thing in life is to know yourself.",
+      "author": "Thales",
+      "category": "self-knowledge",
+      "tags": ["self-knowledge", "wisdom", "introspection"]
+    },
+    {
+      "id": 38,
+      "text": "Well-being is realized by small steps, but is truly no small thing.",
+      "author": "Zeno of Citium",
+      "category": "progress",
+      "tags": ["progress", "steps", "stoicism"]
+    },
+    {
+      "id": 39,
+      "text": "Your phone has already replaced your watch, camera, calendar, and alarm clock. Don't let it replace your family!",
+      "author": "Unknown",
+      "category": "family",
+      "tags": ["technology", "phone", "presence"]
+    },
+    {
+      "id": 40,
+      "text": "Haters are a sign you're visible enough to matter.",
+      "author": "Unknown",
+      "category": "self-image",
+      "tags": ["haters", "visibility", "success"]
+    },
+    {
+      "id": 41,
+      "text": "Every plan is better than no plan.",
+      "author": "Thinkel",
+      "category": "success",
+      "tags": ["planning", "decisions", "action"]
+    },
+    {
+      "id": 42,
+      "text": "If someone is captured for too long, they don't know how to be free anymore.",
+      "author": "Thinkel",
+      "category": "freedom",
+      "tags": ["captivity", "habit", "freedom"]
+    },
+    {
+      "id": 43,
+      "text": "Never say never.",
+      "author": "Unknown",
+      "category": "proverbs",
+      "tags": ["never", "belief", "perseverance"]
+    },
+    {
+      "id": 44,
+      "text": "A group is only as strong as its weakest member.",
+      "author": "Carmel Sheridan",
+      "category": "relationships",
+      "tags": ["team", "community", "strength"]
+    },
+    {
+      "id": 45,
+      "text": "You don't need to be great to start. But you need to start to be great.",
+      "author": "Zig Ziglar",
+      "category": "success",
+      "tags": ["start", "greatness", "action"]
+    },
+    {
+      "id": 46,
+      "text": "You can't predict your enemy's every move - but remember that there is a solution for every situation.",
+      "author": "Thinkel",
+      "category": "success",
+      "tags": ["strategy", "solutions", "adaptability"]
+    },
+    {
+      "id": 47,
+      "text": "When you start looking at things differently, you start seeing things you didn't before.",
+      "author": "Wayne Dyer",
+      "category": "wisdom",
+      "tags": ["perspective", "perception", "change"]
+    }
+  ]
+}
