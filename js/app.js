@@ -43,7 +43,9 @@ const translations = {
         delete_confirm_title: "Izbriši citat?", delete_confirm_text: "Ali ste prepričani, da želite ta citat trajno odstraniti iz vaših priljubljenih?",
         delete_note_title: "Izbriši zapisek?", delete_note_text: "Ali ste prepričani, da želite ta zapisek izbrisati?",
         cancel: "Prekliči", delete_yes: "Da, izbriši",
-        usage_tips: "Namigi za uporabo", tip1: "Kliknite srce, da citat shranite.", tip2: "Kliknite ikono za zapiske za misli.", tip3: "Pri zapiskih uporabite dolgi klik za urejanje ali brisanje.", tip4: "Slikovni gumb ustvari citat kot sliko 9:16.",
+        ob1_title: "Dobrodošli v Thinkel", ob1_text: "Vsak dan vas čaka nov citat za razmislek. Dotaknite se datuma, če želite videti citat za drug dan.",
+        ob2_title: "Shranite, kar vas zadene", ob2_text: "Tapnite srce in citat bo shranjen med priljubljene. S svinčnikom dodate svoje misli, dolgi klik pa jih pozneje uredi ali izbriše.",
+        ob3_title: "Citat kot sliko", ob3_text: "S slikovnim gumbom ustvarite citat v formatu 9:16 – popoln za Instagram zgodbo ali ozadje telefona. Lastne fotografije uredite v urejevalniku ozadij.",
         copied: "Kopirano", added_fav: "Dodano med priljubljene", removed_fav: "Odstranjeno", removed_note: "Zapisek izbrisan.",
         toast_backup_success: "Backup uspešno prenesen.", toast_restore_success: "Podatki uspešno obnovljeni.",
         wallpaper_editor: "Urejevalnik ozadij", open_wallpaper: "Odpri urejevalnik",
@@ -66,7 +68,9 @@ const translations = {
         delete_confirm_title: "Remove Favorite?", delete_confirm_text: "Are you sure you want to remove this quote from your favorites?",
         delete_note_title: "Delete Note?", delete_note_text: "Are you sure you want to delete this thought?",
         cancel: "Cancel", delete_yes: "Yes, Delete",
-        usage_tips: "Usage Tips", tip1: "Tap heart to save quote.", tip2: "Tap note icon for thoughts.", tip3: "Use long press on notes to edit or delete.", tip4: "The image button turns the quote into a 9:16 picture.",
+        ob1_title: "Welcome to Thinkel", ob1_text: "A new quote awaits you every day. Tap the date to see the quote for any other day.",
+        ob2_title: "Save what moves you", ob2_text: "Tap the heart to keep a quote in your favorites. Use the pencil to add your thoughts; long press to edit or delete them later.",
+        ob3_title: "Quote as an image", ob3_text: "The image button creates a 9:16 picture of the quote – perfect for an Instagram story or phone wallpaper. Edit your own photos in the wallpaper editor.",
         copied: "Copied", added_fav: "Added to favorites", removed_fav: "Removed from favorites", removed_note: "Note deleted.",
         toast_backup_success: "Backup downloaded successfully.", toast_restore_success: "Data restored successfully.",
         wallpaper_editor: "Wallpaper Editor", open_wallpaper: "Open Editor",
@@ -224,7 +228,7 @@ function updateControlUI(controlId, activeValue) {
 
         options.forEach(opt => {
             const isActive = opt.getAttribute('data-value') === activeValue;
-            opt.style.color = isActive ? 'var(--bg-color)' : 'var(--text-secondary)';
+            opt.style.color = isActive ? 'var(--ink)' : 'var(--ink-soft)';
         });
     }
 }
@@ -904,67 +908,6 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
-}
-
-// === ONBOARDING (shown once, on first visit to the home page) ===
-let obStep = 0;
-function onboardingSteps() {
-    if (currentLang === 'sl') {
-        return [
-            { icon: 'auto_awesome', title: 'Dobrodošli v Thinkel', text: 'Vsak dan vas čaka nov citat za razmislek. Dotaknite se datuma, če želite videti citat za drug dan.' },
-            { icon: 'favorite', title: 'Shranite, kar vas zadene', text: 'Tapnite srce in citat bo shranjen med priljubljene. S svinčnikom dodate svoje misli, dolgi klik pa jih pozneje uredi ali izbriše.' },
-            { icon: 'add_photo_alternate', title: 'Citat kot sliko', text: 'S slikovnim gumbom ustvarite citat v formatu 9:16 – popoln za Instagram zgodbo ali ozadje telefona. Lastne fotografije uredite v urejevalniku ozadij.' }
-        ];
-    }
-    return [
-        { icon: 'auto_awesome', title: 'Welcome to Thinkel', text: 'A new quote awaits you every day. Tap the date to see the quote for any other day.' },
-        { icon: 'favorite', title: 'Save what moves you', text: 'Tap the heart to keep a quote in your favorites. Use the pencil to add your thoughts; long press to edit or delete them later.' },
-        { icon: 'add_photo_alternate', title: 'Quote as an image', text: 'The image button creates a 9:16 picture of the quote – perfect for an Instagram story or phone wallpaper. Edit your own photos in the wallpaper editor.' }
-    ];
-}
-
-function initOnboarding() {
-    if (localStorage.getItem('onboarded') === 'true') return;
-    const ov = document.getElementById('onboarding-overlay');
-    if (!ov) return;
-    obStep = 0;
-    renderOnboardingStep();
-    ov.classList.add('open');
-}
-
-function renderOnboardingStep() {
-    const steps = onboardingSteps();
-    const step = steps[obStep];
-    const iconEl = document.getElementById('ob-icon');
-    const titleEl = document.getElementById('ob-title');
-    const textEl = document.getElementById('ob-text');
-    const dots = document.querySelectorAll('#onboarding-overlay .onboarding-dot');
-    const nextBtn = document.getElementById('ob-next');
-    if (iconEl) iconEl.textContent = step.icon;
-    if (titleEl) titleEl.textContent = step.title;
-    if (textEl) textEl.textContent = step.text;
-    dots.forEach((d, i) => d.classList.toggle('active', i === obStep));
-    if (nextBtn) nextBtn.textContent = (obStep === steps.length - 1)
-        ? (currentLang === 'sl' ? 'Začnimo' : "Let's start")
-        : (currentLang === 'sl' ? 'Naprej' : 'Next');
-    const skipBtn = document.getElementById('ob-skip');
-    if (skipBtn) skipBtn.textContent = currentLang === 'sl' ? 'Preskoči' : 'Skip';
-}
-
-function obNext() {
-    const steps = onboardingSteps();
-    if (obStep >= steps.length - 1) {
-        closeOnboarding();
-        return;
-    }
-    obStep++;
-    renderOnboardingStep();
-}
-
-function closeOnboarding() {
-    localStorage.setItem('onboarded', 'true');
-    const ov = document.getElementById('onboarding-overlay');
-    if (ov) ov.classList.remove('open');
 }
 
 // Register Service Worker for PWA

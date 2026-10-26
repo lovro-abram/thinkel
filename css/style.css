@@ -1,4 +1,4 @@
-/* hallmark · stamp: thinkel v5 · theme: custom "neo-brutalism" (by request) · genre: playful · job: read the daily quote, reflect, note thoughts, share as image · material: real (47 quotes per language, user's own notes) · absent: metrics, photos
+/* hallmark · stamp: thinkel v6 · theme: custom "neo-brutalism" (by request) · genre: playful · job: read the daily quote, reflect, note thoughts, share as image · material: real (47 quotes per language, user's own notes) · absent: metrics, photos
    critique: signature = the daily quote card with its four chunky actions; the 9:16 share image is drawn in the same language
    waiver: info-card with usage tips kept (dismissible, duplicates onboarding) · sweep: floor-clean (tokens only, no transition:all, focus-visible everywhere, reduced-motion fallback, user scaling restored) */
 
@@ -1038,108 +1038,48 @@ input[type="range"]::-moz-range-thumb {
 
 .empty-state .btn { max-width: 280px; margin: 0 auto; }
 
-/* ═══ INFO CARD (usage tips, dismissible) ════════════════ */
-#info-card { background: var(--gold-tint); }
+/* ═══ INFO CARD (onboarding content, dismissible) ═════════ */
+#info-card { background: var(--surface); }
 
 #info-card .date-picker-btn { background: var(--surface); }
 
-/* ═══ ONBOARDING ═════════════════════════════════════════ */
-#onboarding-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(5, 11, 8, 0.8);
-    z-index: 1500;
+.ob-row {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s ease;
-    padding: 20px;
-}
-
-#onboarding-overlay.open { opacity: 1; pointer-events: auto; }
-
-.onboarding-card {
-    background: var(--surface);
-    width: 100%;
-    max-width: 380px;
-    border: var(--border-w) solid var(--ink);
-    border-radius: var(--r-xl);
-    padding: 30px 25px 25px 25px;
-    text-align: center;
-    box-shadow: var(--shadow-lg);
-    transform: scale(0.94);
-    transition: transform 0.25s var(--ease);
-}
-
-#onboarding-overlay.open .onboarding-card { transform: scale(1); }
-
-.onboarding-icon-wrap {
-    width: 76px;
-    height: 76px;
-    margin: 0 auto 18px auto;
-    border: var(--border-w) solid var(--ink);
-    border-radius: var(--r-xl);
-    background: var(--yellow);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: var(--shadow-sm);
-    transform: rotate(-3deg);
-}
-
-.onboarding-icon-wrap .material-icons-round {
-    font-size: 38px;
-    color: var(--ink);
-}
-
-.onboarding-title {
-    font-family: var(--font-display);
-    font-size: 1.25rem;
-    color: var(--ink);
-    margin: 0 0 10px 0;
-    text-transform: uppercase;
-}
-
-.onboarding-text {
-    font-size: 0.92rem;
-    color: var(--ink-soft);
-    line-height: 1.55;
-    margin: 0 0 22px 0;
-    min-height: 66px;
-}
-
-.onboarding-dots {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 18px;
-}
-
-.onboarding-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-    background: var(--surface-2);
-    border: 2px solid var(--ink);
-    transition: transform 0.3s var(--ease), background 0.3s;
-}
-
-.onboarding-dot.active {
-    background: var(--green);
-    width: 24px;
-}
-
-.onboarding-actions {
-    display: flex;
+    align-items: flex-start;
     gap: 12px;
+    margin-bottom: 16px;
 }
 
-.onboarding-actions .btn { flex: 1; }
+.ob-icon {
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--green-tint);
+    border: 2px solid var(--ink);
+    border-radius: var(--r-md);
+    box-shadow: 2px 2px 0 0 var(--shadow-c);
+}
+
+.ob-icon .material-icons-round {
+    font-size: 22px;
+    color: var(--green-deep);
+}
+
+.ob-title {
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 0.95rem;
+    margin-bottom: 2px;
+}
+
+.ob-text {
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    line-height: 1.45;
+}
 
 /* ═══ DESKTOP ════════════════════════════════════════════ */
 @media (min-width: 600px) {

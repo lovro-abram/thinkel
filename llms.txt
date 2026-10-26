@@ -1,5 +1,5 @@
 # Thinkel — daily quotes (PWA)
-# https://daily-quote.neocities.org
+# https://thinkel.labram.workers.dev
 
 > Thinkel is a free, installable web app (PWA) that shows one thought-provoking quote a day, in English or Slovenian. Readers can save favourite quotes, write private thoughts about them, generate 9:16 wallpaper images from quotes, and use the app offline. No account, no tracking, no ads.
 
@@ -7,14 +7,14 @@ Thinkel is made by Lovro Abram (Instagram: @abram.lovro) as a companion to his d
 
 ## Pages
 
-- [Home — quote of the day](https://daily-quote.neocities.org/): today's quote with actions to share it, save it as a 9:16 image, favourite it, or write a private thought about it.
-- [Saved](https://daily-quote.neocities.org/saved.html): the user's locally stored favourite quotes and written notes, with search. Content stays in the browser (localStorage), nothing is uploaded.
-- [Settings](https://daily-quote.neocities.org/settings.html): quote font size, app language (English or Slovenian), data backup export/import (.thinkel file), app installation.
-- [Wallpaper Editor](https://daily-quote.neocities.org/wallpaper.html): upload any photo, add a quote on top, choose font, size, colour and alignment, and export a 9:16 phone wallpaper.
+- [Home — quote of the day](https://thinkel.labram.workers.dev/): today's quote with actions to share it, save it as a 9:16 image, favourite it, or write a private thought about it.
+- [Saved](https://thinkel.labram.workers.dev/saved.html): the user's locally stored favourite quotes and written notes, with search. Content stays in the browser (localStorage), nothing is uploaded.
+- [Settings](https://thinkel.labram.workers.dev/settings.html): quote font size, app language (English or Slovenian), data backup export/import (.thinkel file), app installation.
+- [Wallpaper Editor](https://thinkel.labram.workers.dev/wallpaper.html): upload any photo, add a quote on top, choose font, size, colour and alignment, and export a 9:16 phone wallpaper.
 
 ## Notes for LLMs
 
 - The app is fully client-side (static HTML/CSS/JS + service worker); user data (favourites, notes, settings) never leaves the device.
 - Quote data lives in `data/en.citati.json` and `data/sl.citati.json` (fields: id, text, author, category, tags).
 - Supported languages: English (default) and Slovenian (auto-detected from the browser, switchable in Settings).
-- Do not confuse Thinkel with the author's main site at https://website.labram.workers.dev — that one hosts his 30-day video journey; Thinkel is the daily-quote companion app.
+- Thinkel lives at https://thinkel.labram.workers.dev (a subdomain sibling of the author's main site https://website.labram.workers.dev — that one hosts his 30-day video journey; Thinkel is the daily-quote companion app).
