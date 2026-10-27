@@ -44,11 +44,9 @@ const translations = {
         delete_note_title: "Izbriši zapisek?", delete_note_text: "Ali ste prepričani, da želite ta zapisek izbrisati?",
         cancel: "Prekliči", delete_yes: "Da, izbriši",
         share_quote: "Deli citat",
-        share_instagram: "Instagram", share_facebook: "Facebook", share_x: "X (Twitter)", share_whatsapp: "WhatsApp",
-        share_email: "E-pošta", share_copy: "Kopiraj",
-        share_hint_image: "slika", share_hint_image_text: "slika + besedilo", share_hint_text: "besedilo",
-        share_clipboard: "Slika je kopirana v odložišče – prilepi jo (Ctrl+V) v objavo.",
-        share_note: "Na telefonu se slika 9:16 z citatom deli prek sistemskega okna – izbereš aplikacijo in slika je že v njej, objaviš pa jo le še s klikom. Na računalniku se slika kopira v odložišče, da jo prilepiš (Ctrl+V) v objavo.",
+        share_download: "Prenesi sliko", share_copy_text: "Kopiraj citat",
+        share_hint_download: "slika 9:16", share_hint_text: "besedilo + povezava",
+        share_note: "Slika je v formatu 9:16 — primerna za Instagram Story ali wallpaper. Na telefonu gumb Deli takoj odpre sistemsko okno za deljenje s sliko in citatom.",
         copied: "Kopirano", added_fav: "Dodano med priljubljene", removed_fav: "Odstranjeno", removed_note: "Zapisek izbrisan.",
         toast_backup_success: "Backup uspešno prenesen.", toast_restore_success: "Podatki uspešno obnovljeni.",
         wallpaper_editor: "Urejevalnik ozadij", open_wallpaper: "Odpri urejevalnik",
@@ -72,11 +70,9 @@ const translations = {
         delete_note_title: "Delete Note?", delete_note_text: "Are you sure you want to delete this thought?",
         cancel: "Cancel", delete_yes: "Yes, Delete",
         share_quote: "Share Quote",
-        share_instagram: "Instagram", share_facebook: "Facebook", share_x: "X (Twitter)", share_whatsapp: "WhatsApp",
-        share_email: "Email", share_copy: "Copy text",
-        share_hint_image: "image", share_hint_image_text: "image + text", share_hint_text: "text",
-        share_clipboard: "Image copied to clipboard – paste it (Ctrl+V) into the post.",
-        share_note: "On your phone the 9:16 image is shared through the system sheet – pick the app and the picture is already in it; just tap Share to post. On a computer the image is copied to the clipboard so you can paste it (Ctrl+V) into the post.",
+        share_download: "Download image", share_copy_text: "Copy quote",
+        share_hint_download: "9:16 image", share_hint_text: "text + link",
+        share_note: "The image is 9:16 — perfect for an Instagram story or wallpaper. On phones, the Share button opens the system share sheet right away, with the image and the quote.",
         copied: "Copied", added_fav: "Added to favorites", removed_fav: "Removed from favorites", removed_note: "Note deleted.",
         toast_backup_success: "Backup downloaded successfully.", toast_restore_success: "Data restored successfully.",
         wallpaper_editor: "Wallpaper Editor", open_wallpaper: "Open Editor",
@@ -513,10 +509,12 @@ function updateFavButtonState() {
     }
 }
 
-// === SHARE MODAL (v8) ===
-// The share button no longer fires the native sheet directly: it opens
-// a modal (same pattern as the My Thoughts modal) where the user picks
-// Instagram / Facebook / X / WhatsApp / Email / Copy.
+// === SHARE (v10) ===
+// Phone/tablet: the share button opens the SYSTEM share sheet directly
+// — the 9:16 image and the quote (author + link) travel together; the
+// user only picks the app (Instagram story = one tap more).
+// Desktop: the share button opens a modal with 2 options (download the
+// image / copy the quote). The modal stays open until closed with ×.
 function openShareModal() {
     if (!currentQuote || !currentQuote.text) return;
     const modal = document.getElementById('share-modal');
@@ -536,17 +534,59 @@ function buildShareText() {
     return `"${currentQuote.text}" ${getAttribution(currentQuote, true)}`.trim();
 }
 
-// Routes a share-modal choice.
-//   copy    -> text only (what the old share button copied)
-//   email   -> image + text
-//   socials -> image (9:16 card), text pre-filled where possible
-async function shareToNetwork(network) {
-    const url = window.location.origin + window.location.pathname;
-    const quoteText = buildShareText();
-    closeShareModal();
+// Touch-primary device (phone/tablet)? Desktop pointers report
+// hover:hover + pointer:fine, phones/tablets the opposite.
+function isTouchPrimary() {
+    return !!(window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches);
+}
 
-    if (network === 'copy') {
-        const fullText = `${quoteText}\n\n${url}`;
+// Share button entry point.
+async function onShareClick() {
+    if (!currentQuote || !currentQuote.text) return;
+    if (isTouchPrimary()) {
+        await shareCurrentQuote();
+        return;
+    }
+    openShareModal();
+}
+
+// Phone: straight to the system share sheet — image + quote + link.
+async function shareCurrentQuote() {
+    const url = window.location.origin + window.location.pathname;
+    const text = `${buildShareText()}\n\n${url}`;
+    showToast(t('image_creating'));
+    const file = await createQuoteImageFile();
+    if (!file) { showToast(t('image_failed')); return; }
+    if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
+        try {
+            await navigator.share({ files: [file], text });
+            return;
+        } catch (err) {
+            if (err && err.name === 'AbortError') return; // user closed the sheet
+            console.error('navigator.share failed:', err);
+        }
+    }
+    // Old device without image sharing: offer the desktop-style modal
+    // (download the image / copy the quote) as a fallback.
+    openShareModal();
+}
+
+// Desktop modal actions. The modal deliberately STAYS OPEN so the user
+// can use both options; it closes only via the × button.
+async function shareDesktopAction(action) {
+    const url = window.location.origin + window.location.pathname;
+
+    if (action === 'download') {
+        showToast(t('image_creating'));
+        const file = await createQuoteImageFile();
+        if (!file) { showToast(t('image_failed')); return; }
+        downloadQuoteImage(file);
+        showToast(t('image_saved'));
+        return;
+    }
+
+    if (action === 'copy') {
+        const fullText = `${buildShareText()}\n\n${url}`;
         try {
             await navigator.clipboard.writeText(fullText);
             showToast(t('copied'));
@@ -567,88 +607,6 @@ async function shareToNetwork(network) {
                 showToast(t('image_failed'));
             }
         }
-        return;
-    }
-
-    await shareQuoteImage(network, quoteText, url);
-}
-
-// Preferred path on phones: the native share sheet with the IMAGE
-// attached — the only standards-based way to land the picture inside
-// Instagram Stories / Facebook / X / WhatsApp / the mail app. The
-// user picks the app in the sheet and the image is already in it —
-// nothing is downloaded on this path.
-// Desktop fallback: the PNG goes straight to the CLIPBOARD and the
-// network's composer opens — the user just pastes (Ctrl+V / Cmd+V).
-// Download happens only as a last resort on very old browsers.
-async function shareQuoteImage(network, quoteText, url) {
-    showToast(t('image_creating'));
-    const file = await createQuoteImageFile();
-    if (!file) { showToast(t('image_failed')); return; }
-
-    // 1) Phones/tablets: system share sheet -> tap the app -> story/composer
-    if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
-        try {
-            const payload = { files: [file], title: 'Thinkel' };
-            // Instagram Stories take a bare image; everywhere else the
-            // quote (mail also gets the link) travels as the caption.
-            if (network === 'email') payload.text = `${quoteText}\n\n${url}`;
-            else if (network !== 'instagram') payload.text = quoteText;
-            await navigator.share(payload);
-            return; // shared — or the user closed the sheet
-        } catch (err) {
-            if (err && err.name === 'AbortError') return;
-            console.error('navigator.share failed:', err);
-            // fall through to the clipboard fallback
-        }
-    }
-
-    // 2) Desktop: copy the image to the clipboard, then open the composer.
-    if (await copyImageToClipboard(file)) {
-        const composed = `${quoteText}\n\n${url}`;
-        if (network === 'facebook') {
-            window.open('https://www.facebook.com/', '_blank');
-        } else if (network === 'x') {
-            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(composed)}`, '_blank');
-        } else if (network === 'whatsapp') {
-            window.open('https://web.whatsapp.com/', '_blank');
-        } else if (network === 'instagram') {
-            window.open('https://www.instagram.com/', '_blank');
-        } else if (network === 'email') {
-            window.location.href = `mailto:?subject=${encodeURIComponent('Thinkel')}&body=${encodeURIComponent(composed)}`;
-        }
-        showToast(t('share_clipboard'));
-        return;
-    }
-
-    // 3) Last resort (old browser, no image share and no clipboard):
-    //    save the image locally, then open the network.
-    downloadQuoteImage(file);
-    const composed = `${quoteText}\n\n${url}`;
-    if (network === 'facebook') {
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(quoteText)}`, '_blank');
-    } else if (network === 'x') {
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(composed)}`, '_blank');
-    } else if (network === 'whatsapp') {
-        window.open(`https://wa.me/?text=${encodeURIComponent(composed)}`, '_blank');
-    } else if (network === 'instagram') {
-        window.open('https://www.instagram.com/', '_blank');
-    } else if (network === 'email') {
-        window.location.href = `mailto:?subject=${encodeURIComponent('Thinkel')}&body=${encodeURIComponent(composed)}`;
-    }
-    showToast(t('image_saved'));
-}
-
-// Writes a PNG to the system clipboard (desktop path). True on success.
-async function copyImageToClipboard(file) {
-    try {
-        if (!navigator.clipboard || typeof ClipboardItem === 'undefined') return false;
-        const blob = (file instanceof Blob) ? file : new Blob([file], { type: 'image/png' });
-        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-        return true;
-    } catch (err) {
-        console.error('clipboard image failed:', err);
-        return false;
     }
 }
 

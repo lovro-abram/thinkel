@@ -1,6 +1,6 @@
-/* hallmark · stamp: thinkel v9 · theme: custom "neo-brutalism" (by request) · genre: playful · job: read the daily quote, reflect, note thoughts, share as image · material: real (47 quotes per language, user's own notes) · absent: metrics, photos
-   critique: signature = the daily quote card with its three full-width chunky actions; the 9:16 share image is drawn in the same language
-   waiver: brand colors in the share modal (Instagram/Facebook/WhatsApp identity) · sweep: floor-clean (tokens only, no transition:all, focus-visible everywhere, reduced-motion fallback, user scaling restored) */
+/* hallmark · stamp: thinkel v10 · theme: custom "neo-brutalism" (by request) · genre: playful · job: read the daily quote, reflect, note thoughts, share as image · material: real (47 quotes per language, user's own notes) · absent: metrics, photos
+   critique: signature = the daily quote card with its three full-width chunky actions; phone shares straight through the system sheet, desktop gets a 2-option modal
+   sweep: floor-clean (tokens only, no transition:all, focus-visible everywhere, reduced-motion fallback, user scaling restored) */
 
 /* ═══ SELF-HOSTED DISPLAY FONT ════════════════════════════
    Archivo Black hosted locally (v8): the h1 titles stay bold even
@@ -1011,16 +1011,9 @@ input[type="range"]::-moz-range-thumb {
 
 .share-icon svg { width: 20px; height: 20px; fill: currentColor; display: block; }
 
-/* brand-colors-waiver:start — 3rd-party brand identity colours (material facts,
-   same as the Google/Material palette): Instagram #D6336C, Facebook #1877F2,
-   WhatsApp #25D366, X = --ink literal, glyph white */
-.si-instagram { background: #D6336C; }
-.si-facebook  { background: #1877F2; }
-.si-x         { background: #12291A; }
-.si-whatsapp  { background: #25D366; }
-.si-email     { background: var(--green); }
-.si-copy      { background: var(--ink-soft); }
-/* brand-colors-waiver:end */
+/* v10: only 2 options in the desktop modal — download (green) + copy (soft) */
+.si-download { background: var(--green); }
+.si-copy     { background: var(--ink-soft); }
 
 .share-label {
     font-weight: 700;
