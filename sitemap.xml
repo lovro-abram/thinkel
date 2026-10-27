@@ -7,21 +7,9 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://thinkel.labram.workers.dev/wallpaper.html</loc>
+    <loc>https://thinkel.labram.workers.dev/wallpaper</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://thinkel.labram.workers.dev/saved.html</loc>
-    <lastmod>2026-10-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://thinkel.labram.workers.dev/settings.html</loc>
-    <lastmod>2026-10-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
   </url>
 </urlset>

@@ -14,9 +14,11 @@
     <title>Wallpaper Editor | Urejevalnik ozadij – Thinkel</title>
     <meta name="description" content="Create your own quote wallpaper: choose aspect ratio (9:16 story, 9:19.5 phone, 16:9 desktop), font, color and text position. | Ustvarite lastno ozadje s citatom: izberite razmerje stranic (9:16 zgodba, 9:19.5 telefon, 16:9 namizje), pisavo, barvo in položaj besedila.">
     <meta name="robots" content="noindex, follow">
-    
+    <link rel="canonical" href="https://thinkel.labram.workers.dev/wallpaper">
+
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Thinkel">
+    <meta property="og:url" content="https://thinkel.labram.workers.dev/wallpaper">
     <meta property="og:title" content="Wallpaper Editor | Urejevalnik ozadij – Thinkel">
     <meta property="og:description" content="Create your own quote wallpaper. | Ustvarite lastno ozadje s citatom.">
     <meta property="og:image" content="https://thinkel.labram.workers.dev/og-image.png">
@@ -25,7 +27,7 @@
     
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;700&family=Montserrat:wght@400;600&family=Merriweather:wght@300;400;700&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=10">
+    <link rel="stylesheet" href="css/style.css?v=12">
     
     <style>
         :root {
@@ -746,14 +748,22 @@
         @media (prefers-reduced-motion: reduce) {
             * { transition: none !important; animation: none !important; }
         }
+
+        /* v12 a11y: font/color/align controls are real <button>s now — strip UA chrome */
+        .font-option, .color-swatch, .align-btn {
+            font-family: inherit;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .color-swatch { padding: 0; }
     </style>
 </head>
 <body id="wallpaper-page">
 
     <div id="app-container">
         <header style="padding: 12px 20px; flex-shrink: 0;">
-            <button class="back-btn" onclick="window.location.href='settings.html'" style="display: flex; position: absolute; left: 20px; top: 50%; transform: translateY(-50%);">
-                <span class="material-icons-round">arrow_back</span>
+            <button class="back-btn" onclick="window.location.href='settings'" style="display: flex; position: absolute; left: 20px; top: 50%; transform: translateY(-50%);" aria-label="Back to settings">
+                <span class="material-icons-round" aria-hidden="true">arrow_back</span>
             </button>
             <h1 data-i18n="wp_title">Wallpaper Editor</h1>
         </header>
@@ -805,13 +815,13 @@
                         <label class="control-label" data-i18n="wp_align">Text Alignment</label>
                         <div class="alignment-row">
                             <button class="align-btn" onclick="changeAlign('left', this)" title="Left" data-i18n-title="wp_left">
-                                <span class="material-icons-round">format_align_left</span>
+                                <span class="material-icons-round" aria-hidden="true">format_align_left</span>
                             </button>
                             <button class="align-btn active" onclick="changeAlign('center', this)" title="Center" data-i18n-title="wp_center">
-                                <span class="material-icons-round">format_align_center</span>
+                                <span class="material-icons-round" aria-hidden="true">format_align_center</span>
                             </button>
                             <button class="align-btn" onclick="changeAlign('right', this)" title="Right" data-i18n-title="wp_right">
-                                <span class="material-icons-round">format_align_right</span>
+                                <span class="material-icons-round" aria-hidden="true">format_align_right</span>
                             </button>
                         </div>
                     </div>
@@ -858,12 +868,12 @@
                     <div class="control-group" style="margin-bottom: 12px;">
                         <label class="control-label" data-i18n="wp_font">Font Style</label>
                         <div class="font-selector">
-                            <div class="font-option playfair active" onclick="changeFont('Playfair Display', this)" data-i18n="wp_f_classic">Classic</div>
-                            <div class="font-option lato" onclick="changeFont('Lato', this)" data-i18n="wp_f_clean">Clean</div>
-                            <div class="font-option caveat" onclick="changeFont('Caveat', this)" data-i18n="wp_f_relaxed">Relaxed</div>
-                            <div class="font-option montserrat" onclick="changeFont('Montserrat', this)" data-i18n="wp_f_modern">Modern</div>
-                            <div class="font-option merriweather" onclick="changeFont('Merriweather', this)" data-i18n="wp_f_elegant">Elegant</div>
-                            <div class="font-option dancing" onclick="changeFont('Dancing Script', this)" data-i18n="wp_f_script">Handwriting</div>
+                            <button class="font-option playfair active" type="button" aria-pressed="true" onclick="changeFont('Playfair Display', this)" data-i18n="wp_f_classic">Classic</button>
+                            <button class="font-option lato" type="button" aria-pressed="false" onclick="changeFont('Lato', this)" data-i18n="wp_f_clean">Clean</button>
+                            <button class="font-option caveat" type="button" aria-pressed="false" onclick="changeFont('Caveat', this)" data-i18n="wp_f_relaxed">Relaxed</button>
+                            <button class="font-option montserrat" type="button" aria-pressed="false" onclick="changeFont('Montserrat', this)" data-i18n="wp_f_modern">Modern</button>
+                            <button class="font-option merriweather" type="button" aria-pressed="false" onclick="changeFont('Merriweather', this)" data-i18n="wp_f_elegant">Elegant</button>
+                            <button class="font-option dancing" type="button" aria-pressed="false" onclick="changeFont('Dancing Script', this)" data-i18n="wp_f_script">Handwriting</button>
                         </div>
                     </div>
 
@@ -871,15 +881,15 @@
                     <div class="control-group" style="margin-bottom: 16px;">
                         <label class="control-label" data-i18n="wp_color">Text Color</label>
                         <div class="color-row">
-                            <div class="color-swatch white active" onclick="changeColor('#ffffff', this)" title="White" data-i18n-title="wp_c_white"></div>
-                            <div class="color-swatch black" onclick="changeColor('#000000', this)" title="Black" data-i18n-title="wp_c_black"></div>
-                            <div class="color-swatch color-wheel" onclick="openColorPicker()" title="Custom color" data-i18n-title="wp_c_custom"></div>
+                            <button class="color-swatch white active" type="button" aria-pressed="true" onclick="changeColor('#ffffff', this)" title="White" aria-label="White" data-i18n-title="wp_c_white"></button>
+                            <button class="color-swatch black" type="button" aria-pressed="false" onclick="changeColor('#000000', this)" title="Black" aria-label="Black" data-i18n-title="wp_c_black"></button>
+                            <button class="color-swatch color-wheel" type="button" aria-pressed="false" onclick="openColorPicker()" title="Custom color" aria-label="Custom color" data-i18n-title="wp_c_custom"></button>
                         </div>
                     </div>
 
                     <!-- Download Button -->
                     <button class="download-btn" id="download-btn" onclick="downloadWallpaper()" disabled>
-                        <span class="material-icons-round">download</span>
+                        <span class="material-icons-round" aria-hidden="true">download</span>
                         <span data-i18n="wp_save">Save Wallpaper</span>
                     </button>
                 </div>
@@ -888,9 +898,9 @@
     </div>
 
     <!-- Color Picker Modal -->
-    <div id="color-modal" class="color-modal-overlay" onclick="closeColorPicker(event)">
+    <div id="color-modal" class="color-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="color-modal-title" onclick="closeColorPicker(event)">
         <div class="color-modal-card" onclick="event.stopPropagation()">
-            <h3 class="color-modal-title" data-i18n="wp_pick">Pick a color</h3>
+            <h3 class="color-modal-title" id="color-modal-title" data-i18n="wp_pick">Pick a color</h3>
             
             <div class="color-input-wrapper" onclick="document.getElementById('color-picker-input').click()">
                 <input type="color" id="color-picker-input" onchange="handleColorPick(this.value)">
@@ -916,7 +926,7 @@
     </div>
 
     <!-- Toast -->
-    <div id="toast" class="toast">
+    <div id="toast" class="toast" role="status" aria-live="polite">
         <span class="material-icons-round toast-icon">check_circle</span>
         <span id="toast-message">Wallpaper saved!</span>
     </div>
@@ -938,7 +948,13 @@
         
         let currentQuotes = [];
         let currentQuote = null;
-        let currentLang = localStorage.getItem('lang') || 'en';
+        // Language: saved choice wins, first visit auto-detects (v12 audit fix)
+        let currentLang = (function () {
+            const saved = localStorage.getItem('lang');
+            if (saved === 'sl' || saved === 'en') return saved;
+            const nav = (navigator.languages && navigator.languages[0]) || navigator.language || '';
+            return String(nav).toLowerCase().startsWith('sl') ? 'sl' : 'en';
+        })();
         let recentColors = JSON.parse(localStorage.getItem('recentColors') || '[]');
         let marginsLocked = true;
         
@@ -998,6 +1014,7 @@
             document.title = currentLang === 'sl'
                 ? 'Urejevalnik ozadij – Thinkel'
                 : 'Wallpaper Editor – Thinkel';
+            document.documentElement.lang = currentLang === 'sl' ? 'sl' : 'en';   // screen-reader voice (v12)
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (wpT(key) !== key) el.textContent = wpT(key);
@@ -1422,37 +1439,69 @@
 
         function changeFont(font, element) {
             settings.font = font;
-            document.querySelectorAll('.font-option').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.font-option').forEach(el => {
+                el.classList.remove('active');
+                el.setAttribute('aria-pressed', 'false');
+            });
             element.classList.add('active');
+            element.setAttribute('aria-pressed', 'true');
             drawCanvas();
         }
 
         function changeColor(color, element) {
             settings.color = color;
             document.querySelectorAll('.color-swatch').forEach(el => {
-                if (!el.classList.contains('color-wheel')) el.classList.remove('active');
+                if (!el.classList.contains('color-wheel')) {
+                    el.classList.remove('active');
+                    el.setAttribute('aria-pressed', 'false');
+                }
             });
-            if (element) element.classList.add('active');
+            if (element) {
+                element.classList.add('active');
+                element.setAttribute('aria-pressed', 'true');
+            }
             drawCanvas();
         }
 
         function changeAlign(align, element) {
             settings.align = align;
-            document.querySelectorAll('.align-btn').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.align-btn').forEach(el => {
+                el.classList.remove('active');
+                el.setAttribute('aria-pressed', 'false');
+            });
             element.classList.add('active');
+            element.setAttribute('aria-pressed', 'true');
             drawCanvas();
         }
 
+        let lastColorTrigger = null;
+
         function openColorPicker() {
+            lastColorTrigger = document.activeElement;
             updateRecentColorsDisplay();
-            document.getElementById('color-modal').classList.add('open');
+            const modal = document.getElementById('color-modal');
+            modal.classList.add('open');
+            document.body.classList.add('modal-open');
+            const done = modal.querySelector('.close-color-modal');
+            if (done) setTimeout(() => done.focus(), 80);
         }
 
         function closeColorPicker(e) {
             if (!e || e.target.id === 'color-modal' || e.target.classList.contains('close-color-modal')) {
-                document.getElementById('color-modal').classList.remove('open');
+                const modal = document.getElementById('color-modal');
+                modal.classList.remove('open');
+                document.body.classList.remove('modal-open');
+                if (lastColorTrigger && typeof lastColorTrigger.focus === 'function') lastColorTrigger.focus();
+                lastColorTrigger = null;
             }
         }
+
+        // Escape closes the color modal (this page does not load js/app.js)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('color-modal').classList.contains('open')) {
+                closeColorPicker();
+            }
+        });
 
         function handleColorPick(color) {
             settings.color = color;

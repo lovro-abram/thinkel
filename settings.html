@@ -12,13 +12,14 @@
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     
     <title>Settings | Nastavitve – Thinkel</title>
-    <meta name="description" content="Thinkel app settings: font size, language, wallpaper editor, backup. | Nastavitve aplikacije Thinkel: velikost pisave, jezik, urejevalnik ozadij, varnostna kopija.">
+    <meta name="description" content="Thinkel app settings: font size, language, wallpaper editor, backup.">
     <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://thinkel.labram.workers.dev/settings">
     
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Thinkel">
-    <meta property="og:url" content="https://thinkel.labram.workers.dev/settings.html">
+    <meta property="og:url" content="https://thinkel.labram.workers.dev/settings">
     <meta property="og:title" content="Settings | Nastavitve – Thinkel">
     <meta property="og:description" content="Thinkel app settings. | Nastavitve aplikacije Thinkel.">
     <meta property="og:image" content="https://thinkel.labram.workers.dev/og-image.png">
@@ -29,7 +30,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=10">
+    <link rel="stylesheet" href="css/style.css?v=12">
 </head>
 <body data-page="settings">
 
@@ -39,11 +40,11 @@
         </header>
 
         <main>
-            <h2 style="margin-top:0; font-size: 1.4rem; color: var(--gold); font-family: var(--font-display); font-weight: 400; text-transform: uppercase;" data-i18n="settings">Settings</h2>
+            <h2 style="margin-top:0; font-size: 1.4rem; color: var(--ink); font-family: var(--font-display); font-weight: 400; text-transform: uppercase;" data-i18n="settings">Settings</h2>
             
             <div id="install-pwa-btn" class="card" style="display: none; align-items: center; justify-content: space-between; border-color: var(--green); padding: 20px;">
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <span class="material-icons-round" style="color: var(--accent-color); font-size: 32px;">download_for_offline</span>
+                    <span class="material-icons-round" aria-hidden="true" style="color: var(--accent-color); font-size: 32px;">download_for_offline</span>
                     <div>
                         <div style="font-weight: 700; color: var(--text-primary);" data-i18n="pwa_install_title">Download App</div>
                         <div style="font-size: 0.8rem; color: var(--text-secondary);" data-i18n="pwa_install_desc">Use Thinkel anywhere, even offline.</div>
@@ -54,21 +55,21 @@
 
             <div class="card">
                 <div class="setting-item">
-                    <label class="setting-label" data-i18n="font_size">Font Size</label>
-                    <div class="segment-control" id="font-control">
-                        <div class="segment-pill"></div>
-                        <div class="segment-opt" data-value="small" onclick="changeFontSize('small')" data-i18n="small">Small</div>
-                        <div class="segment-opt" data-value="medium" onclick="changeFontSize('medium')" data-i18n="medium">Medium</div>
-                        <div class="segment-opt" data-value="large" onclick="changeFontSize('large')" data-i18n="large">Large</div>
+                    <label class="setting-label" id="font-size-label" data-i18n="font_size">Font Size</label>
+                    <div class="segment-control" id="font-control" role="radiogroup" aria-labelledby="font-size-label">
+                        <div class="segment-pill" aria-hidden="true"></div>
+                        <button type="button" class="segment-opt" role="radio" aria-checked="false" data-value="small" onclick="changeFontSize('small')" data-i18n="small">Small</button>
+                        <button type="button" class="segment-opt" role="radio" aria-checked="false" data-value="medium" onclick="changeFontSize('medium')" data-i18n="medium">Medium</button>
+                        <button type="button" class="segment-opt" role="radio" aria-checked="false" data-value="large" onclick="changeFontSize('large')" data-i18n="large">Large</button>
                     </div>
                 </div>
 
                 <div class="setting-item">
-                    <label class="setting-label" data-i18n="language">Language</label>
-                    <div class="segment-control" id="lang-control">
-                        <div class="segment-pill"></div>
-                        <div class="segment-opt" data-value="sl" onclick="changeLanguage('sl')">Slovenščina</div>
-                        <div class="segment-opt" data-value="en" onclick="changeLanguage('en')">English</div>
+                    <label class="setting-label" id="lang-label" data-i18n="language">Language</label>
+                    <div class="segment-control" id="lang-control" role="radiogroup" aria-labelledby="lang-label">
+                        <div class="segment-pill" aria-hidden="true"></div>
+                        <button type="button" class="segment-opt" role="radio" aria-checked="false" data-value="sl" onclick="changeLanguage('sl')">Slovenščina</button>
+                        <button type="button" class="segment-opt" role="radio" aria-checked="false" data-value="en" onclick="changeLanguage('en')">English</button>
                     </div>
                 </div>
             </div>
@@ -77,8 +78,8 @@
                 <div class="setting-item">
                     <span class="setting-label" data-i18n="wallpaper_editor">Wallpaper Editor</span>
                     <div class="setting-control">
-                        <a href="wallpaper.html" class="btn btn-primary" style="text-decoration: none;">
-                            <span class="material-icons-round">wallpaper</span>
+                        <a href="wallpaper" class="btn btn-primary" style="text-decoration: none;">
+                            <span class="material-icons-round" aria-hidden="true">wallpaper</span>
                             <span data-i18n="open_wallpaper">Open Editor</span>
                         </a>
                     </div>
@@ -104,28 +105,28 @@
 
         <!-- Bottom Navigation -->
         <nav class="bottom-nav">
-            <a href="index.html" class="nav-item">
-                <span class="nav-quote-icon">❞</span>
+            <a href="./" class="nav-item">
+                <span class="nav-quote-icon" aria-hidden="true">❞</span>
                 <span data-i18n="nav_today">Home</span>
             </a>
-            <a href="saved.html" class="nav-item">
-                <span class="material-icons-round">bookmark</span>
+            <a href="saved" class="nav-item">
+                <span class="material-icons-round" aria-hidden="true">bookmark</span>
                 <span data-i18n="nav_saved">Saved</span>
             </a>
-            <a href="settings.html" class="nav-item active">
-                <span class="material-icons-round">settings</span>
+            <a href="settings" class="nav-item active">
+                <span class="material-icons-round" aria-hidden="true">settings</span>
                 <span data-i18n="nav_settings">Settings</span>
             </a>
         </nav>
     </div>
 
     <!-- Toast -->
-    <div id="toast" class="toast">
-        <span class="material-icons-round toast-icon">check_circle</span>
+    <div id="toast" class="toast" role="status" aria-live="polite">
+        <span class="material-icons-round toast-icon" aria-hidden="true">check_circle</span>
         <span id="toast-message">Message</span>
     </div>
 
-    <script src="js/app.js?v=10"></script>
+    <script src="js/app.js?v=12"></script>
     <script>
         // Initialize settings page
         document.addEventListener('DOMContentLoaded', () => {
@@ -133,7 +134,7 @@
             updateTexts();
             requestAnimationFrame(() => {
                 updateControlUI('font-control', localStorage.getItem('fontSize') || 'medium');
-                updateControlUI('lang-control', localStorage.getItem('lang') || 'en');
+                updateControlUI('lang-control', (typeof resolveInitialLang === 'function') ? resolveInitialLang() : (localStorage.getItem('lang') || 'en'));
             });
         });
     </script>

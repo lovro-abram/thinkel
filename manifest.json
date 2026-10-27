@@ -1,8 +1,9 @@
 {
+  "id": "./",
   "name": "Thinkel – Daily Inspiration | Dnevna inspiracija",
   "short_name": "Thinkel",
   "description": "A new thought-provoking quote every day, favorites, notes and a wallpaper editor. | Vsak dan nov citat za razmislek, priljubljeni citati, zapiski in urejevalnik ozadij.",
-  "start_url": "./index.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#F1F6EC",
@@ -29,12 +30,12 @@
   "shortcuts": [
     {
       "name": "Today's quote | Današnji citat",
-      "url": "./index.html",
+      "url": "./",
       "icons": [{ "src": "icons/icon-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "Saved | Shranjeno",
-      "url": "./saved.html",
+      "url": "./saved",
       "icons": [{ "src": "icons/icon-192x192.png", "sizes": "192x192" }]
     }
   ]

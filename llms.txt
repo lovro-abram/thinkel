@@ -8,9 +8,9 @@ Thinkel is made by Lovro Abram (Instagram: @abram.lovro) as a companion to his d
 ## Pages
 
 - [Home — quote of the day](https://thinkel.labram.workers.dev/): today's quote with actions to share it, save it as a 9:16 image, favourite it, or write a private thought about it.
-- [Saved](https://thinkel.labram.workers.dev/saved.html): the user's locally stored favourite quotes and written notes, with search. Content stays in the browser (localStorage), nothing is uploaded.
-- [Settings](https://thinkel.labram.workers.dev/settings.html): quote font size, app language (English or Slovenian), data backup export/import (.thinkel file), app installation.
-- [Wallpaper Editor](https://thinkel.labram.workers.dev/wallpaper.html): upload any photo, add a quote on top, choose font, size, colour and alignment, and export a 9:16 phone wallpaper.
+- [Saved](https://thinkel.labram.workers.dev/saved): the user's locally stored favourite quotes and written notes, with search. Content stays in the browser (localStorage), nothing is uploaded.
+- [Settings](https://thinkel.labram.workers.dev/settings): quote font size, app language (English or Slovenian), data backup export/import (.thinkel file), app installation.
+- [Wallpaper Editor](https://thinkel.labram.workers.dev/wallpaper): upload any photo, add a quote on top, choose font, size, colour and alignment, and export a 9:16 phone wallpaper.
 
 ## Notes for LLMs
 

@@ -1,4 +1,4 @@
-/* hallmark · stamp: thinkel v10 · theme: custom "neo-brutalism" (by request) · genre: playful · job: read the daily quote, reflect, note thoughts, share as image · material: real (47 quotes per language, user's own notes) · absent: metrics, photos
+/* hallmark · stamp: thinkel v12 · theme: custom "neo-brutalism" (by request) · genre: playful · job: read the daily quote, reflect, note thoughts, share as image · material: real (47 quotes per language, user's own notes) · absent: metrics, photos
    critique: signature = the daily quote card with its three full-width chunky actions; phone shares straight through the system sheet, desktop gets a 2-option modal
    sweep: floor-clean (tokens only, no transition:all, focus-visible everywhere, reduced-motion fallback, user scaling restored) */
 
@@ -33,6 +33,8 @@
     --shadow-c:     #12291A;   /* hard offset shadow */
 
     --green:        #1CA85E;
+    --green-text:   #0E7A3C;   /* darker green for TEXT only — 5.4:1 on white,
+                                  5.0:1 on paper (WCAG AA); --green stays for fills/borders */
     --green-deep:   #0E3D23;
     --green-tint:   #C9ECD5;
     --on-green:     #0A2414;
@@ -108,9 +110,10 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
-/* instant focus, everywhere (Floor 6) */
+/* instant focus, everywhere (Floor 6) — ink outline: visible on every surface
+   (gold was ≈1.9:1 on white, v12 audit fix) */
 :focus-visible {
-    outline: 3px solid var(--gold);
+    outline: 3px solid var(--ink);
     outline-offset: 2px;
     border-radius: 4px;
 }
@@ -138,7 +141,7 @@ h1 {
     font-weight: 400;
     font-size: 1.25rem;
     letter-spacing: 0;
-    color: var(--green);
+    color: var(--green-text);   /* was --green: 2.8:1 on paper, below the 3:1 large-text minimum */
     text-transform: uppercase;
 }
 
@@ -250,7 +253,7 @@ main::-webkit-scrollbar { display: none; }
 .date-text {
     font-size: 0.98rem;
     letter-spacing: 0;
-    color: var(--green);
+    color: var(--green-text);   /* was --green: 3.1:1, needs 4.5:1 (bold < 19px) */
     font-weight: 700;
 }
 
@@ -269,7 +272,7 @@ main::-webkit-scrollbar { display: none; }
 .quote-author {
     font-family: var(--font-ui);
     font-size: 0.9rem;
-    color: var(--gold);
+    color: var(--green-text);   /* was --gold: 2.0:1 on white — severe WCAG fail (v12) */
     text-align: right;
     font-weight: 700;
     margin-bottom: 25px;
@@ -372,7 +375,8 @@ main::-webkit-scrollbar { display: none; }
     transition: border-color 0.2s;
 }
 
-.search-input:focus { border-color: var(--gold); }
+.search-input:focus { border-color: var(--green-text); }
+.search-input:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
 .search-input::placeholder { color: var(--ink-soft); }
 
 /* ═══ SAVED TABS ═════════════════════════════════════════ */
@@ -393,6 +397,7 @@ main::-webkit-scrollbar { display: none; }
     color: var(--ink-soft);
     font-weight: 700;
     font-size: 0.9rem;
+    font-family: var(--font-ui);   /* button conversion (v12): keep the app font */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -674,6 +679,8 @@ input[type="range"] {
     outline: none;
 }
 
+input[type="range"]:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 22px;
@@ -732,7 +739,7 @@ input[type="range"]::-moz-range-thumb {
 
 .color-swatch.active {
     transform: scale(1.12);
-    outline: 3px solid var(--gold);
+    outline: 3px solid var(--ink);
     outline-offset: 2px;
 }
 
@@ -787,7 +794,7 @@ input[type="range"]::-moz-range-thumb {
 
 .btn:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-md); }
 .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 var(--shadow-c); }
-.btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+.btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
 .btn-primary {
     background: var(--green);
@@ -845,7 +852,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .nav-item:hover { color: var(--ink); }
-.nav-item.active { color: var(--green); }
+.nav-item.active { color: var(--green-text); }   /* was --green: below 4.5:1 (v12) */
 
 .nav-item .material-icons-round { font-size: 24px; }
 
@@ -1177,4 +1184,29 @@ input[type="range"]::-moz-range-thumb {
 @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
     .long-press-active { filter: none; opacity: 0.7; }
+}
+
+/* ═══ v12 ACCESSIBILITY HELPERS ══════════════════════════ */
+/* Background scroll lock while a modal is open (toggled from app.js) */
+body.modal-open { overflow: hidden; }
+
+/* Visually hidden, still read by screen readers */
+.vh {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Buttons converted from divs (tabs / segments) — kill UA chrome */
+button.saved-tab,
+button.segment-opt {
+    -webkit-appearance: none;
+    appearance: none;
+    touch-action: manipulation;
 }

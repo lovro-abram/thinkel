@@ -12,13 +12,14 @@
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     
     <title>Saved | Shranjeno – Thinkel</title>
-    <meta name="description" content="Your saved quotes and personal notes in the Thinkel app. | Vaši shranjeni citati in osebni zapiski v aplikaciji Thinkel.">
+    <meta name="description" content="Your saved quotes and personal notes in the Thinkel app.">
     <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://thinkel.labram.workers.dev/saved">
     
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Thinkel">
-    <meta property="og:url" content="https://thinkel.labram.workers.dev/saved.html">
+    <meta property="og:url" content="https://thinkel.labram.workers.dev/saved">
     <meta property="og:title" content="Saved | Shranjeno – Thinkel">
     <meta property="og:description" content="Your saved quotes and personal notes. | Vaši shranjeni citati in osebni zapiski.">
     <meta property="og:image" content="https://thinkel.labram.workers.dev/og-image.png">
@@ -29,7 +30,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=10">
+    <link rel="stylesheet" href="css/style.css?v=12">
 </head>
 <body data-page="saved">
 
@@ -39,69 +40,70 @@
         </header>
 
         <main>
-            <div class="saved-tabs">
-                <div class="saved-tab active" id="tab-fav" onclick="switchSavedTab('fav')">
-                    <span class="material-icons-round">favorite</span>
+            <h2 class="vh" data-i18n="nav_saved">Saved</h2>
+            <div class="saved-tabs" role="tablist" aria-label="Saved content">
+                <button type="button" class="saved-tab active" id="tab-fav" role="tab" aria-selected="true" aria-controls="saved-favorites-container" onclick="switchSavedTab('fav')">
+                    <span class="material-icons-round" aria-hidden="true">favorite</span>
                     <span data-i18n="favorites">Favorites</span>
-                </div>
-                <div class="saved-tab" id="tab-notes" onclick="switchSavedTab('notes')">
-                    <span class="material-icons-round">edit_note</span>
+                </button>
+                <button type="button" class="saved-tab" id="tab-notes" role="tab" aria-selected="false" aria-controls="saved-notes-container" onclick="switchSavedTab('notes')">
+                    <span class="material-icons-round" aria-hidden="true">edit_note</span>
                     <span data-i18n="notes">Notes</span>
-                </div>
+                </button>
             </div>
 
             <div class="search-container">
                 <div class="search-input-wrapper">
-                    <span class="material-icons-round">search</span>
+                    <span class="material-icons-round" aria-hidden="true">search</span>
                     <input type="text" id="search-input" class="search-input" placeholder="Search..." oninput="handleSearch(this.value)">
                 </div>
             </div>
 
-            <div id="saved-favorites-container">
+            <div id="saved-favorites-container" role="tabpanel" aria-labelledby="tab-fav">
                 <div id="favorites-list"></div>
                 <div id="no-favorites" class="empty-state" style="display:none;">
-                    <span class="material-icons-round empty-icon">favorite_border</span>
+                    <span class="material-icons-round empty-icon" aria-hidden="true">favorite_border</span>
                     <div class="empty-title" data-i18n="empty_fav_title">Nothing saved yet</div>
                     <p data-i18n="no_fav">No saved quotes.</p>
-                    <a href="index.html" class="btn btn-primary" data-i18n="empty_cta">See today's quote</a>
+                    <a href="./" class="btn btn-primary" data-i18n="empty_cta">See today's quote</a>
                 </div>
             </div>
 
-            <div id="saved-notes-container" style="display: none;">
+            <div id="saved-notes-container" role="tabpanel" aria-labelledby="tab-notes" style="display: none;">
                 <div id="notes-list"></div>
                 <div id="no-notes" class="empty-state" style="display:none;">
-                    <span class="material-icons-round empty-icon">edit_note</span>
+                    <span class="material-icons-round empty-icon" aria-hidden="true">edit_note</span>
                     <div class="empty-title" data-i18n="empty_notes_title">No thoughts yet</div>
                     <p data-i18n="no_notes">No thoughts written.</p>
-                    <a href="index.html" class="btn btn-primary" data-i18n="empty_cta">See today's quote</a>
+                    <a href="./" class="btn btn-primary" data-i18n="empty_cta">See today's quote</a>
                 </div>
             </div>
         </main>
 
         <!-- Bottom Navigation -->
         <nav class="bottom-nav">
-            <a href="index.html" class="nav-item">
-                <span class="nav-quote-icon">❞</span>
+            <a href="./" class="nav-item">
+                <span class="nav-quote-icon" aria-hidden="true">❞</span>
                 <span data-i18n="nav_today">Home</span>
             </a>
-            <a href="saved.html" class="nav-item active">
-                <span class="material-icons-round">bookmark</span>
+            <a href="saved" class="nav-item active">
+                <span class="material-icons-round" aria-hidden="true">bookmark</span>
                 <span data-i18n="nav_saved">Saved</span>
             </a>
-            <a href="settings.html" class="nav-item">
-                <span class="material-icons-round">settings</span>
+            <a href="settings" class="nav-item">
+                <span class="material-icons-round" aria-hidden="true">settings</span>
                 <span data-i18n="nav_settings">Settings</span>
             </a>
         </nav>
     </div>
 
     <!-- Notes Modal -->
-    <div id="notes-modal" class="modal-overlay">
+    <div id="notes-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="notes-modal-title">
         <div class="modal-card">
             <div class="modal-header">
-                <h3 class="modal-title" data-i18n="my_thoughts">My Thoughts</h3>
+                <h3 class="modal-title" id="notes-modal-title" data-i18n="my_thoughts">My Thoughts</h3>
                 <button class="btn btn-icon-only btn-secondary" style="width:auto;" onclick="closeNotesModal()">
-                    <span class="material-icons-round">close</span>
+                    <span class="material-icons-round" aria-hidden="true">close</span>
                 </button>
             </div>
             <div id="modal-quote-ref" class="modal-quote-ref">
@@ -115,9 +117,9 @@
     </div>
 
     <!-- Delete Modal -->
-    <div id="delete-modal" class="modal-overlay" onclick="closeDeleteModal(event)">
+    <div id="delete-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title" onclick="closeDeleteModal(event)">
         <div class="modal-card">
-            <span class="material-icons-round" style="color:var(--red); font-size:48px; display:block; width:100%; text-align:center; margin-bottom:15px;">warning</span>
+            <span class="material-icons-round" aria-hidden="true" style="color:var(--red); font-size:48px; display:block; width:100%; text-align:center; margin-bottom:15px;">warning</span>
             <h3 class="modal-title" style="text-align:center;" id="delete-modal-title" data-i18n="delete_confirm_title">Remove Favorite?</h3>
             <p style="color:var(--ink-soft); margin-bottom:25px; text-align:center;" id="delete-modal-text" data-i18n="delete_confirm_text">Are you sure you want to remove this quote from your favorites?</p>
             <div style="display:flex; flex-direction:column; gap:10px;">
@@ -128,12 +130,12 @@
     </div>
 
     <!-- Toast -->
-    <div id="toast" class="toast">
-        <span class="material-icons-round toast-icon">check_circle</span>
+    <div id="toast" class="toast" role="status" aria-live="polite">
+        <span class="material-icons-round toast-icon" aria-hidden="true">check_circle</span>
         <span id="toast-message">Message</span>
     </div>
 
-    <script src="js/app.js?v=10"></script>
+    <script src="js/app.js?v=12"></script>
     <script>
         // Initialize saved page
         document.addEventListener('DOMContentLoaded', () => {

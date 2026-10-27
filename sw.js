@@ -1,4 +1,4 @@
-const CACHE_NAME = 'thinkel-v13';
+const CACHE_NAME = 'thinkel-v14';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

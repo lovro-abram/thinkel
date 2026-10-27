@@ -35,8 +35,8 @@ const translations = {
         nav_today: "Domov", nav_saved: "Shranjeno", nav_settings: "Nastavitve",
         favorites: "Priljubljene", notes: "Zapiski",
         no_fav: "Ni shranjenih citatov.", no_notes: "Ni zapisanih misli.",
-        settings: "Nastavitve", theme: "Tema", font_size: "Velikost pisave", language: "Jezik",
-        dark: "Temna", light: "Svetla", small: "Majhna", medium: "Srednja", large: "Velika",
+        settings: "Nastavitve", font_size: "Velikost pisave", language: "Jezik",
+        small: "Majhna", medium: "Srednja", large: "Velika",
         backup: "Varnostna kopija", download_backup: "Prenesi backup", restore: "Obnovi iz backupa",
         today: "Danes", quote_on_day: "Citat na dan",
         my_thoughts: "Moje misli", save_close: "Shrani in zapri",
@@ -55,14 +55,16 @@ const translations = {
         empty_notes_title: "Ni še zapisanih misli",
         empty_cta: "Poglej današnji citat",
         image_creating: "Ustvarjam sliko...", image_saved: "Slika shranjena (9:16)", image_failed: "Slike ni bilo mogoče ustvariti.",
-        quote_data_error: "Datoteke s citati ni bilo mogoče prebrati – prikazani so samo osnovni citati. Preverite JSON datoteko."
+        quote_data_error: "Datoteke s citati ni bilo mogoče prebrati – prikazani so samo osnovni citati. Preverite JSON datoteko.",
+        invalid_backup: "Neveljavna datoteka backupa.",
+        aria_search: "Iskanje citatov in zapiskov", aria_note: "Tvoje misli o citatu"
     },
     en: {
         nav_today: "Home", nav_saved: "Saved", nav_settings: "Settings",
         favorites: "Favorites", notes: "Notes",
         no_fav: "No saved quotes.", no_notes: "No thoughts written.",
-        settings: "Settings", theme: "Theme", font_size: "Font Size", language: "Language",
-        dark: "Dark", light: "Light", small: "Small", medium: "Medium", large: "Large",
+        settings: "Settings", font_size: "Font Size", language: "Language",
+        small: "Small", medium: "Medium", large: "Large",
         backup: "Backup Data", download_backup: "Download Backup", restore: "Restore Backup",
         today: "Today", quote_on_day: "Quote on this day",
         my_thoughts: "My Thoughts", save_close: "Save & Close",
@@ -81,14 +83,27 @@ const translations = {
         empty_notes_title: "No thoughts yet",
         empty_cta: "See today's quote",
         image_creating: "Creating image...", image_saved: "Image saved (9:16)", image_failed: "Could not create the image.",
-        quote_data_error: "Quote file could not be read – showing built-in quotes only. Please check the JSON file."
+        quote_data_error: "Quote file could not be read – showing built-in quotes only. Please check the JSON file.",
+        invalid_backup: "Invalid backup file.",
+        aria_search: "Search quotes and notes", aria_note: "Your thoughts about the quote"
     }
 };
 
 // Load quotes from JSON files
+
+// Language resolution (v12): a saved choice always wins; on first visit the
+// browser language is auto-detected (sl → Slovenian, otherwise English) —
+// same behaviour as the labram landing page.
+function resolveInitialLang() {
+    const saved = localStorage.getItem('lang');
+    if (saved === 'sl' || saved === 'en') return saved;
+    const nav = (navigator.languages && navigator.languages[0]) || navigator.language || '';
+    return String(nav).toLowerCase().startsWith('sl') ? 'sl' : 'en';
+}
+
 async function loadQuotes() {
     // Declared outside try so the catch block can reference fileName in its error message
-    const lang = localStorage.getItem('lang') || 'en';
+    const lang = resolveInitialLang();
     currentLang = lang;
     const fileName = lang === 'sl' ? 'data/sl.citati.json' : 'data/en.citati.json';
     try {
@@ -156,6 +171,8 @@ function handleTouchMove() {
 }
 
 function showActionMenu(itemElement, id, type) {
+    id = parseInt(id, 10);               // ids are numbers — guard the inline templates
+    if (!Number.isFinite(id)) return;
     itemElement.classList.add('long-press-active');
     
     const actionRow = document.createElement('div');
@@ -211,7 +228,7 @@ function editNoteDirect(id, btnElement) {
 // === SETTINGS ===
 function loadSettings() {
     const font = localStorage.getItem('fontSize') || 'medium';
-    const lang = localStorage.getItem('lang') || 'en';
+    const lang = resolveInitialLang();
     applyFontSize(font);
     applyLanguage(lang);
 }
@@ -231,6 +248,7 @@ function updateControlUI(controlId, activeValue) {
         options.forEach(opt => {
             const isActive = opt.getAttribute('data-value') === activeValue;
             opt.style.color = isActive ? 'var(--ink)' : 'var(--ink-soft)';
+            opt.setAttribute('aria-checked', isActive ? 'true' : 'false');
         });
     }
 }
@@ -281,7 +299,13 @@ function updateTexts() {
     const searchInput = document.getElementById('search-input');
     if (searchInput) {
         searchInput.placeholder = currentLang === 'sl' ? "Iskanje..." : "Search...";
+        searchInput.setAttribute('aria-label', t.aria_search);
     }
+    const noteArea = document.getElementById('modal-note-input');
+    if (noteArea) noteArea.setAttribute('aria-label', t.aria_note);
+
+    // Screen readers must switch voice with the app language (v12 audit fix)
+    document.documentElement.lang = currentLang === 'sl' ? 'sl' : 'en';
     
     // Bilingual tab title, refined to the active language
     const page = document.body.getAttribute('data-page');
@@ -379,26 +403,50 @@ function exportBackup() {
 function importBackup(input) {
     const file = input.files[0];
     if (!file) return;
+    // Backups are tiny JSON files — a bigger "backup" is not ours (v12 audit fix)
+    if (file.size > 5 * 1024 * 1024) {
+        showToast(t('invalid_backup'));
+        input.value = '';
+        return;
+    }
     const reader = new FileReader();
     reader.onload = function(e) {
         try {
             const data = JSON.parse(e.target.result);
-            if (data.favorites && Array.isArray(data.favorites)) {
-                localStorage.setItem('favorites', JSON.stringify(data.favorites.map(q => q.id)));
+            if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('bad shape');
+            // favorites: array of quote objects (or bare ids) → sanitized numeric id list
+            if (data.favorites !== undefined) {
+                if (!Array.isArray(data.favorites)) throw new Error('favorites');
+                const ids = data.favorites
+                    .map(q => (q && typeof q === 'object') ? parseInt(q.id, 10) : parseInt(q, 10))
+                    .filter(id => Number.isFinite(id))
+                    .slice(0, 1000);
+                localStorage.setItem('favorites', JSON.stringify([...new Set(ids)]));
             }
-            if (data.notes && Array.isArray(data.notes)) {
-                data.notes.forEach(item => {
-                    if (item.quote && item.note) localStorage.setItem(`note_${item.quote.id}`, item.note);
-                });
+            // notes: { quote: { id }, note: string } — validated + capped
+            if (data.notes !== undefined) {
+                if (!Array.isArray(data.notes)) throw new Error('notes');
+                data.notes
+                    .filter(item => item && typeof item === 'object'
+                        && item.quote && typeof item.quote === 'object'
+                        && Number.isFinite(parseInt(item.quote.id, 10))
+                        && typeof item.note === 'string'
+                        && item.note.length <= 10000)
+                    .slice(0, 1000)
+                    .forEach(item => {
+                        localStorage.setItem(`note_${parseInt(item.quote.id, 10)}`, item.note);
+                    });
             }
             if (typeof loadDailyQuote === 'function') loadDailyQuote();
             if (typeof updateFavButtonState === 'function') updateFavButtonState();
             if (typeof renderSaved === 'function') renderSaved();
             showToast(t('toast_restore_success'));
         } catch (err) {
-            alert("Neveljavna datoteka backupa.");
+            console.error('importBackup failed:', err);
+            showToast(t('invalid_backup'));
         }
     };
+    reader.onerror = function() { showToast(t('invalid_backup')); };
     reader.readAsText(file);
     input.value = '';
 }
@@ -432,7 +480,12 @@ function updateDateDisplay(dateObj) {
 async function handleDateChange(dateString) {
     if (!dateString) return;
     
-    const chosenDate = new Date(dateString);
+    // Parse as LOCAL calendar date (v12 audit fix): new Date("YYYY-MM-DD")
+    // parses as UTC midnight, which in negative-UTC timezones lands on the
+    // previous day and would select/display the wrong quote.
+    const parts = dateString.split('-').map(Number);
+    if (parts.length !== 3 || parts.some(n => !Number.isFinite(n))) return;
+    const chosenDate = new Date(parts[0], parts[1] - 1, parts[2]);
     updateDateDisplay(chosenDate);
     
     // Make sure quotes are loaded
@@ -467,8 +520,11 @@ async function handleDateChange(dateString) {
 
 async function loadDailyQuote() {
     await loadQuotes();
+    // Local calendar date, NOT toISOString() (UTC) — in Slovenia between
+    // 00:00–01:59 the UTC date is still "yesterday" (v12 audit fix).
     const today = new Date();
-    handleDateChange(today.toISOString().split('T')[0]);
+    const pad = n => String(n).padStart(2, '0');
+    handleDateChange(`${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`);
 }
 
 // === FAVORITES ===
@@ -502,9 +558,11 @@ function updateFavButtonState() {
     const icon = btn.querySelector('.material-icons-round');
     if (favorites.includes(currentQuote.id)) {
         btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
         icon.textContent = 'favorite';
     } else {
         btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
         icon.textContent = 'favorite_border';
     }
 }
@@ -522,12 +580,11 @@ function openShareModal() {
     const authorSpan = document.getElementById('share-quote-author');
     if (textSpan) textSpan.textContent = `"${currentQuote.text}"`;
     if (authorSpan) authorSpan.textContent = getAttribution(currentQuote, true);
-    if (modal) modal.classList.add('open');
+    openModalA11y(modal);
 }
 
 function closeShareModal() {
-    const modal = document.getElementById('share-modal');
-    if (modal) modal.classList.remove('open');
+    closeModalA11y(document.getElementById('share-modal'));
 }
 
 function buildShareText() {
@@ -736,8 +793,14 @@ function switchSavedTab(tab) {
     const favContainer = document.getElementById('saved-favorites-container');
     const notesContainer = document.getElementById('saved-notes-container');
     
-    if (favTab) favTab.classList.toggle('active', tab === 'fav');
-    if (notesTab) notesTab.classList.toggle('active', tab === 'notes');
+    if (favTab) {
+        favTab.classList.toggle('active', tab === 'fav');
+        favTab.setAttribute('aria-selected', tab === 'fav' ? 'true' : 'false');
+    }
+    if (notesTab) {
+        notesTab.classList.toggle('active', tab === 'notes');
+        notesTab.setAttribute('aria-selected', tab === 'notes' ? 'true' : 'false');
+    }
     if (favContainer) favContainer.style.display = tab === 'fav' ? 'block' : 'none';
     if (notesContainer) notesContainer.style.display = tab === 'notes' ? 'block' : 'none';
     
@@ -802,8 +865,8 @@ async function renderFavorites() {
 
         item.innerHTML = `
             <div class="fav-content">
-                <div class="fav-quote">"${quote.text}"</div>
-                <div class="fav-author">${getAttribution(quote, true)}</div>
+                <div class="fav-quote">"${escapeHtml(quote.text)}"</div>
+                <div class="fav-author">${escapeHtml(getAttribution(quote, true))}</div>
             </div>
         `;
         listEl.appendChild(item);
@@ -865,8 +928,8 @@ async function renderNotes() {
 
         item.innerHTML = `
             <div class="note-content">
-                <span class="note-quote-ref">"${quote.text}"</span>
-                <div class="note-author">${getAttribution(quote, true)}</div>
+                <span class="note-quote-ref">"${escapeHtml(quote.text)}"</span>
+                <div class="note-author">${escapeHtml(getAttribution(quote, true))}</div>
                 <div class="note-body">${escapeHtml(note)}</div>
             </div>
         `;
@@ -875,6 +938,42 @@ async function renderNotes() {
 }
 
 // === MODALS ===
+// === MODAL ACCESSIBILITY (v12 audit fix) ===
+// Every dialog gets: role=dialog (in HTML), focus moved inside on open,
+// focus restored to the trigger on close, background scroll lock and
+// Escape-to-close (delegated listener below).
+let lastFocusedElement = null;
+
+function openModalA11y(modal) {
+    if (!modal) return;
+    lastFocusedElement = document.activeElement;
+    modal.classList.add('open');
+    document.body.classList.add('modal-open');
+    const firstField = modal.querySelector('button, [href], input, textarea, select');
+    if (firstField) setTimeout(() => firstField.focus(), 80);
+}
+
+function closeModalA11y(modal) {
+    if (!modal) return;
+    modal.classList.remove('open');
+    document.body.classList.remove('modal-open');
+    if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+        lastFocusedElement.focus();
+    }
+    lastFocusedElement = null;
+}
+
+// Escape closes whichever overlay is open (notes / share / delete / color).
+document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const open = document.querySelector('.modal-overlay.open, .color-modal-overlay.open');
+    if (!open) return;
+    if (open.id === 'delete-modal') { closeDeleteModal(null, true); }
+    else if (open.id === 'share-modal') { closeShareModal(); }
+    else if (open.id === 'notes-modal') { closeNotesModal(); }
+    else if (open.id === 'color-modal') { closeColorPicker(); }   // wallpaper page
+});
+
 function openNotesModalForEdit(quoteId) {
     const quote = currentQuotes.find(q => q.id === quoteId);
     if (!quote) return;
@@ -887,8 +986,8 @@ function openNotesModalForEdit(quoteId) {
     
     updateModalQuoteRef(quote);
     
-    modal.classList.add('open');
-    setTimeout(() => textArea.focus(), 100);
+    openModalA11y(modal);
+    setTimeout(() => textArea.focus(), 120);
 }
 
 function openNotesModal() {
@@ -899,8 +998,8 @@ function openNotesModal() {
     
     updateModalQuoteRef(currentQuote);
     
-    modal.classList.add('open');
-    setTimeout(() => textArea.focus(), 100);
+    openModalA11y(modal);
+    setTimeout(() => textArea.focus(), 120);
 }
 
 function updateModalQuoteRef(quote) {
@@ -914,8 +1013,7 @@ function updateModalQuoteRef(quote) {
 }
 
 function closeNotesModal() {
-    const modal = document.getElementById('notes-modal');
-    if (modal) modal.classList.remove('open');
+    closeModalA11y(document.getElementById('notes-modal'));
     if (typeof renderSaved === 'function') renderSaved();
 }
 
@@ -937,13 +1035,12 @@ function showDeleteModal(type, id) {
         if (modalText) modalText.textContent = t('delete_note_text');
     }
     const modal = document.getElementById('delete-modal');
-    if (modal) modal.classList.add('open');
+    openModalA11y(modal);
 }
 
 function closeDeleteModal(event, force = false) {
     if (force || (event && event.target.id === 'delete-modal')) {
-        const modal = document.getElementById('delete-modal');
-        if (modal) modal.classList.remove('open');
+        closeModalA11y(document.getElementById('delete-modal'));
         itemToDelete = null;
     }
 }
