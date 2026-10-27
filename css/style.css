@@ -1,6 +1,19 @@
-/* hallmark · stamp: thinkel v6 · theme: custom "neo-brutalism" (by request) · genre: playful · job: read the daily quote, reflect, note thoughts, share as image · material: real (47 quotes per language, user's own notes) · absent: metrics, photos
-   critique: signature = the daily quote card with its four chunky actions; the 9:16 share image is drawn in the same language
-   waiver: info-card with usage tips kept (dismissible, duplicates onboarding) · sweep: floor-clean (tokens only, no transition:all, focus-visible everywhere, reduced-motion fallback, user scaling restored) */
+/* hallmark · stamp: thinkel v9 · theme: custom "neo-brutalism" (by request) · genre: playful · job: read the daily quote, reflect, note thoughts, share as image · material: real (47 quotes per language, user's own notes) · absent: metrics, photos
+   critique: signature = the daily quote card with its three full-width chunky actions; the 9:16 share image is drawn in the same language
+   waiver: brand colors in the share modal (Instagram/Facebook/WhatsApp identity) · sweep: floor-clean (tokens only, no transition:all, focus-visible everywhere, reduced-motion fallback, user scaling restored) */
+
+/* ═══ SELF-HOSTED DISPLAY FONT ════════════════════════════
+   Archivo Black hosted locally (v8): the h1 titles stay bold even
+   when Google Fonts is slow/blocked. Same design as the Google
+   release; declared after Google's stylesheet, so it wins the
+   cascade for the 'Archivo Black' family. */
+@font-face {
+    font-family: 'Archivo Black';
+    src: url('../fonts/ArchivoBlack-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
 
 /* ═══════════════════════════════════════════════════════════
    THINKEL — Neo-Brutalism design system
@@ -262,10 +275,10 @@ main::-webkit-scrollbar { display: none; }
     margin-bottom: 25px;
 }
 
-/* ═══ ACTION BUTTONS (the four) ══════════════════════════ */
+/* ═══ ACTION BUTTONS (the three — full card width) ════════ */
 .action-buttons {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
 }
 
@@ -873,6 +886,7 @@ input[type="range"]::-moz-range-thumb {
     width: 90%;
     max-width: 400px;
     max-height: 80vh;
+    overflow-y: auto;
     border: var(--border-w) solid var(--ink);
     border-radius: var(--r-xl);
     padding: 25px;
@@ -950,6 +964,88 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .modal-note-area:focus { border-color: var(--green); }
+
+/* ═══ SHARE MODAL (v8) ══════════════════════════════════ */
+/* Six options need a tighter card than the default so the note
+   fits on common phones (scrollable fallback via .modal-card). */
+#share-modal .modal-card { padding: 20px 22px; }
+#share-modal .modal-header { margin-bottom: 12px; }
+#share-modal .modal-quote-ref { margin-bottom: 12px; }
+
+.share-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.share-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    background: var(--surface-2);
+    border: 2px solid var(--ink);
+    border-radius: var(--r-md);
+    padding: 7px 12px;
+    cursor: pointer;
+    font-family: var(--font-ui);
+    color: var(--ink);
+    transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+
+.share-option:hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 0 var(--ink); }
+.share-option:active { transform: translate(0, 0); box-shadow: 1px 1px 0 0 var(--ink); }
+
+.share-icon {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--ink);
+    border-radius: var(--r-sm, 8px);
+    color: var(--surface);
+}
+
+.share-icon svg { width: 20px; height: 20px; fill: currentColor; display: block; }
+
+/* brand-colors-waiver:start — 3rd-party brand identity colours (material facts,
+   same as the Google/Material palette): Instagram #D6336C, Facebook #1877F2,
+   WhatsApp #25D366, X = --ink literal, glyph white */
+.si-instagram { background: #D6336C; }
+.si-facebook  { background: #1877F2; }
+.si-x         { background: #12291A; }
+.si-whatsapp  { background: #25D366; }
+.si-email     { background: var(--green); }
+.si-copy      { background: var(--ink-soft); }
+/* brand-colors-waiver:end */
+
+.share-label {
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-align: left;
+    flex: 1;
+}
+
+.share-hint {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-align: right;
+}
+
+.share-note {
+    font-size: 0.72rem;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    margin: 0;
+    border-top: 2px solid var(--surface-2);
+    padding-top: 9px;
+}
 
 /* ═══ TOAST ══════════════════════════════════════════════ */
 .toast {
@@ -1037,49 +1133,6 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .empty-state .btn { max-width: 280px; margin: 0 auto; }
-
-/* ═══ INFO CARD (onboarding content, dismissible) ═════════ */
-#info-card { background: var(--surface); }
-
-#info-card .date-picker-btn { background: var(--surface); }
-
-.ob-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 16px;
-}
-
-.ob-icon {
-    flex: 0 0 42px;
-    width: 42px;
-    height: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--green-tint);
-    border: 2px solid var(--ink);
-    border-radius: var(--r-md);
-    box-shadow: 2px 2px 0 0 var(--shadow-c);
-}
-
-.ob-icon .material-icons-round {
-    font-size: 22px;
-    color: var(--green-deep);
-}
-
-.ob-title {
-    font-weight: 700;
-    color: var(--ink);
-    font-size: 0.95rem;
-    margin-bottom: 2px;
-}
-
-.ob-text {
-    color: var(--ink-soft);
-    font-size: 0.85rem;
-    line-height: 1.45;
-}
 
 /* ═══ DESKTOP ════════════════════════════════════════════ */
 @media (min-width: 600px) {

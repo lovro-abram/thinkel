@@ -1,4 +1,4 @@
-const CACHE_NAME = 'thinkel-v10';
+const CACHE_NAME = 'thinkel-v12';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -6,6 +6,7 @@ const ASSETS_TO_CACHE = [
   './settings.html',
   './wallpaper.html',
   './css/style.css',
+  './fonts/ArchivoBlack-Regular.ttf',
   './js/app.js',
   './manifest.json',
   './data/sl.citati.json',

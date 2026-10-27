@@ -43,9 +43,12 @@ const translations = {
         delete_confirm_title: "Izbriši citat?", delete_confirm_text: "Ali ste prepričani, da želite ta citat trajno odstraniti iz vaših priljubljenih?",
         delete_note_title: "Izbriši zapisek?", delete_note_text: "Ali ste prepričani, da želite ta zapisek izbrisati?",
         cancel: "Prekliči", delete_yes: "Da, izbriši",
-        ob1_title: "Dobrodošli v Thinkel", ob1_text: "Vsak dan vas čaka nov citat za razmislek. Dotaknite se datuma, če želite videti citat za drug dan.",
-        ob2_title: "Shranite, kar vas zadene", ob2_text: "Tapnite srce in citat bo shranjen med priljubljene. S svinčnikom dodate svoje misli, dolgi klik pa jih pozneje uredi ali izbriše.",
-        ob3_title: "Citat kot sliko", ob3_text: "S slikovnim gumbom ustvarite citat v formatu 9:16 – popoln za Instagram zgodbo ali ozadje telefona. Lastne fotografije uredite v urejevalniku ozadij.",
+        share_quote: "Deli citat",
+        share_instagram: "Instagram", share_facebook: "Facebook", share_x: "X (Twitter)", share_whatsapp: "WhatsApp",
+        share_email: "E-pošta", share_copy: "Kopiraj",
+        share_hint_image: "slika", share_hint_image_text: "slika + besedilo", share_hint_text: "besedilo",
+        share_clipboard: "Slika je kopirana v odložišče – prilepi jo (Ctrl+V) v objavo.",
+        share_note: "Na telefonu se slika 9:16 z citatom deli prek sistemskega okna – izbereš aplikacijo in slika je že v njej, objaviš pa jo le še s klikom. Na računalniku se slika kopira v odložišče, da jo prilepiš (Ctrl+V) v objavo.",
         copied: "Kopirano", added_fav: "Dodano med priljubljene", removed_fav: "Odstranjeno", removed_note: "Zapisek izbrisan.",
         toast_backup_success: "Backup uspešno prenesen.", toast_restore_success: "Podatki uspešno obnovljeni.",
         wallpaper_editor: "Urejevalnik ozadij", open_wallpaper: "Odpri urejevalnik",
@@ -68,9 +71,12 @@ const translations = {
         delete_confirm_title: "Remove Favorite?", delete_confirm_text: "Are you sure you want to remove this quote from your favorites?",
         delete_note_title: "Delete Note?", delete_note_text: "Are you sure you want to delete this thought?",
         cancel: "Cancel", delete_yes: "Yes, Delete",
-        ob1_title: "Welcome to Thinkel", ob1_text: "A new quote awaits you every day. Tap the date to see the quote for any other day.",
-        ob2_title: "Save what moves you", ob2_text: "Tap the heart to keep a quote in your favorites. Use the pencil to add your thoughts; long press to edit or delete them later.",
-        ob3_title: "Quote as an image", ob3_text: "The image button creates a 9:16 picture of the quote – perfect for an Instagram story or phone wallpaper. Edit your own photos in the wallpaper editor.",
+        share_quote: "Share Quote",
+        share_instagram: "Instagram", share_facebook: "Facebook", share_x: "X (Twitter)", share_whatsapp: "WhatsApp",
+        share_email: "Email", share_copy: "Copy text",
+        share_hint_image: "image", share_hint_image_text: "image + text", share_hint_text: "text",
+        share_clipboard: "Image copied to clipboard – paste it (Ctrl+V) into the post.",
+        share_note: "On your phone the 9:16 image is shared through the system sheet – pick the app and the picture is already in it; just tap Share to post. On a computer the image is copied to the clipboard so you can paste it (Ctrl+V) into the post.",
         copied: "Copied", added_fav: "Added to favorites", removed_fav: "Removed from favorites", removed_note: "Note deleted.",
         toast_backup_success: "Backup downloaded successfully.", toast_restore_success: "Data restored successfully.",
         wallpaper_editor: "Wallpaper Editor", open_wallpaper: "Open Editor",
@@ -507,21 +513,150 @@ function updateFavButtonState() {
     }
 }
 
-function shareQuote() {
-    const url = window.location.href;
-    const quoteText = `"${currentQuote.text}" ${getAttribution(currentQuote, true)}`.trim();
-    if (navigator.share) {
-        navigator.share({ title: "Thinkel", text: quoteText, url: url });
-    } else {
-        navigator.clipboard.writeText(`${quoteText}\n\n${url}`)
-            .then(() => showToast(t('copied')));
+// === SHARE MODAL (v8) ===
+// The share button no longer fires the native sheet directly: it opens
+// a modal (same pattern as the My Thoughts modal) where the user picks
+// Instagram / Facebook / X / WhatsApp / Email / Copy.
+function openShareModal() {
+    if (!currentQuote || !currentQuote.text) return;
+    const modal = document.getElementById('share-modal');
+    const textSpan = document.getElementById('share-quote-text');
+    const authorSpan = document.getElementById('share-quote-author');
+    if (textSpan) textSpan.textContent = `"${currentQuote.text}"`;
+    if (authorSpan) authorSpan.textContent = getAttribution(currentQuote, true);
+    if (modal) modal.classList.add('open');
+}
+
+function closeShareModal() {
+    const modal = document.getElementById('share-modal');
+    if (modal) modal.classList.remove('open');
+}
+
+function buildShareText() {
+    return `"${currentQuote.text}" ${getAttribution(currentQuote, true)}`.trim();
+}
+
+// Routes a share-modal choice.
+//   copy    -> text only (what the old share button copied)
+//   email   -> image + text
+//   socials -> image (9:16 card), text pre-filled where possible
+async function shareToNetwork(network) {
+    const url = window.location.origin + window.location.pathname;
+    const quoteText = buildShareText();
+    closeShareModal();
+
+    if (network === 'copy') {
+        const fullText = `${quoteText}\n\n${url}`;
+        try {
+            await navigator.clipboard.writeText(fullText);
+            showToast(t('copied'));
+        } catch (err) {
+            // Clipboard API can be denied (permission/focus) — legacy fallback
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = fullText;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                ta.remove();
+                showToast(t('copied'));
+            } catch (err2) {
+                console.error('clipboard failed:', err, err2);
+                showToast(t('image_failed'));
+            }
+        }
+        return;
+    }
+
+    await shareQuoteImage(network, quoteText, url);
+}
+
+// Preferred path on phones: the native share sheet with the IMAGE
+// attached — the only standards-based way to land the picture inside
+// Instagram Stories / Facebook / X / WhatsApp / the mail app. The
+// user picks the app in the sheet and the image is already in it —
+// nothing is downloaded on this path.
+// Desktop fallback: the PNG goes straight to the CLIPBOARD and the
+// network's composer opens — the user just pastes (Ctrl+V / Cmd+V).
+// Download happens only as a last resort on very old browsers.
+async function shareQuoteImage(network, quoteText, url) {
+    showToast(t('image_creating'));
+    const file = await createQuoteImageFile();
+    if (!file) { showToast(t('image_failed')); return; }
+
+    // 1) Phones/tablets: system share sheet -> tap the app -> story/composer
+    if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
+        try {
+            const payload = { files: [file], title: 'Thinkel' };
+            // Instagram Stories take a bare image; everywhere else the
+            // quote (mail also gets the link) travels as the caption.
+            if (network === 'email') payload.text = `${quoteText}\n\n${url}`;
+            else if (network !== 'instagram') payload.text = quoteText;
+            await navigator.share(payload);
+            return; // shared — or the user closed the sheet
+        } catch (err) {
+            if (err && err.name === 'AbortError') return;
+            console.error('navigator.share failed:', err);
+            // fall through to the clipboard fallback
+        }
+    }
+
+    // 2) Desktop: copy the image to the clipboard, then open the composer.
+    if (await copyImageToClipboard(file)) {
+        const composed = `${quoteText}\n\n${url}`;
+        if (network === 'facebook') {
+            window.open('https://www.facebook.com/', '_blank');
+        } else if (network === 'x') {
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(composed)}`, '_blank');
+        } else if (network === 'whatsapp') {
+            window.open('https://web.whatsapp.com/', '_blank');
+        } else if (network === 'instagram') {
+            window.open('https://www.instagram.com/', '_blank');
+        } else if (network === 'email') {
+            window.location.href = `mailto:?subject=${encodeURIComponent('Thinkel')}&body=${encodeURIComponent(composed)}`;
+        }
+        showToast(t('share_clipboard'));
+        return;
+    }
+
+    // 3) Last resort (old browser, no image share and no clipboard):
+    //    save the image locally, then open the network.
+    downloadQuoteImage(file);
+    const composed = `${quoteText}\n\n${url}`;
+    if (network === 'facebook') {
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(quoteText)}`, '_blank');
+    } else if (network === 'x') {
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(composed)}`, '_blank');
+    } else if (network === 'whatsapp') {
+        window.open(`https://wa.me/?text=${encodeURIComponent(composed)}`, '_blank');
+    } else if (network === 'instagram') {
+        window.open('https://www.instagram.com/', '_blank');
+    } else if (network === 'email') {
+        window.location.href = `mailto:?subject=${encodeURIComponent('Thinkel')}&body=${encodeURIComponent(composed)}`;
+    }
+    showToast(t('image_saved'));
+}
+
+// Writes a PNG to the system clipboard (desktop path). True on success.
+async function copyImageToClipboard(file) {
+    try {
+        if (!navigator.clipboard || typeof ClipboardItem === 'undefined') return false;
+        const blob = (file instanceof Blob) ? file : new Blob([file], { type: 'image/png' });
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+        return true;
+    } catch (err) {
+        console.error('clipboard image failed:', err);
+        return false;
     }
 }
 
-// === COPY QUOTE AS IMAGE (9:16, ready for Instagram Story) ===
-async function copyQuoteAsImage() {
-    if (!currentQuote || !currentQuote.text) return;
-    showToast(t('image_creating'));
+// === QUOTE AS IMAGE (9:16, ready for Instagram Story) ===
+// Draws the neo-brutal 9:16 card on a canvas and returns it as a PNG
+// File — used by the share modal. Returns null on failure.
+async function createQuoteImageFile() {
+    if (!currentQuote || !currentQuote.text) return null;
     try {
         if (document.fonts && document.fonts.ready) {
             try { await document.fonts.ready; } catch (e) { /* ignore */ }
@@ -616,30 +751,23 @@ async function copyQuoteAsImage() {
 
         const blob = await new Promise(res => c.toBlob(res, 'image/png'));
         if (!blob) throw new Error('toBlob failed');
-        const file = new File([blob], 'thinkel-citat.png', { type: 'image/png' });
-
-        // Mobile: share sheet (allows saving to gallery / posting to Instagram)
-        if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
-            await navigator.share({ files: [file], title: 'Thinkel' });
-            return;
-        }
-
-        // Desktop fallback: download the PNG
-        const url2 = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url2;
-        a.download = 'thinkel-citat-9x16.png';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url2), 2000);
-        showToast(t('image_saved'));
+        return new File([blob], 'thinkel-citat.png', { type: 'image/png' });
     } catch (err) {
-        // User cancelled the share sheet is not an error worth reporting
-        if (err && err.name === 'AbortError') return;
-        console.error('copyQuoteAsImage failed:', err);
-        showToast(t('image_failed'));
+        console.error('createQuoteImageFile failed:', err);
+        return null;
     }
+}
+
+// Desktop fallback: download the PNG to the device
+function downloadQuoteImage(file) {
+    const url2 = URL.createObjectURL(file);
+    const a = document.createElement('a');
+    a.href = url2;
+    a.download = 'thinkel-citat-9x16.png';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url2), 2000);
 }
 
 // === SAVED PAGE ===
@@ -882,25 +1010,6 @@ function showToast(msg) {
     if (toast) {
         toast.classList.add('show');
         setTimeout(() => { toast.classList.remove('show'); }, 3000);
-    }
-}
-
-function checkInfoCard() {
-    const isClosed = localStorage.getItem('infoCardDismissed');
-    if (isClosed === 'true') {
-        const card = document.getElementById('info-card');
-        if (card) card.style.display = 'none';
-    }
-}
-
-function hideInfoCard() {
-    const card = document.getElementById('info-card');
-    if (card) {
-        card.style.opacity = '0';
-        setTimeout(() => {
-            card.style.display = 'none';
-            localStorage.setItem('infoCardDismissed', 'true');
-        }, 300);
     }
 }
 
