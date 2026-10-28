@@ -11,8 +11,8 @@
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='4' width='27' height='27' rx='6' fill='%231CA85E'/%3E%3Crect x='5' y='1' width='27' height='27' rx='6' fill='%23FFFFFF' stroke='%2312291A' stroke-width='2'/%3E%3Ctext x='18' y='21' font-size='15' font-family='Arial Black,Arial,sans-serif' font-weight='900' text-anchor='middle' fill='%2312291A'%3ET%3C/text%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     
-    <title>Settings | Nastavitve – Thinkel</title>
-    <meta name="description" content="Thinkel app settings: font size, language, wallpaper editor, backup.">
+    <title>Settings – Thinkel</title>
+    <meta name="description" content="Thinkel app settings: font size, wallpaper editor, backup.">
     <meta name="robots" content="noindex, follow">
     <link rel="canonical" href="https://thinkel.labram.workers.dev/settings">
     
@@ -20,17 +20,16 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Thinkel">
     <meta property="og:url" content="https://thinkel.labram.workers.dev/settings">
-    <meta property="og:title" content="Settings | Nastavitve – Thinkel">
-    <meta property="og:description" content="Thinkel app settings. | Nastavitve aplikacije Thinkel.">
+    <meta property="og:title" content="Settings – Thinkel">
+    <meta property="og:description" content="Thinkel app settings: font size, wallpaper editor, backup.">
     <meta property="og:image" content="https://thinkel.labram.workers.dev/og-image.png">
     <meta property="og:locale" content="en_US">
-    <meta property="og:locale:alternate" content="sl_SI">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=12">
+    <link rel="stylesheet" href="css/style.css?v=16">
 </head>
 <body data-page="settings">
 
@@ -54,28 +53,7 @@
             </div>
 
             <div class="card">
-                <div class="setting-item">
-                    <label class="setting-label" id="font-size-label" data-i18n="font_size">Font Size</label>
-                    <div class="segment-control" id="font-control" role="radiogroup" aria-labelledby="font-size-label">
-                        <div class="segment-pill" aria-hidden="true"></div>
-                        <button type="button" class="segment-opt" role="radio" aria-checked="false" data-value="small" onclick="changeFontSize('small')" data-i18n="small">Small</button>
-                        <button type="button" class="segment-opt" role="radio" aria-checked="false" data-value="medium" onclick="changeFontSize('medium')" data-i18n="medium">Medium</button>
-                        <button type="button" class="segment-opt" role="radio" aria-checked="false" data-value="large" onclick="changeFontSize('large')" data-i18n="large">Large</button>
-                    </div>
-                </div>
-
-                <div class="setting-item">
-                    <label class="setting-label" id="lang-label" data-i18n="language">Language</label>
-                    <div class="segment-control" id="lang-control" role="radiogroup" aria-labelledby="lang-label">
-                        <div class="segment-pill" aria-hidden="true"></div>
-                        <button type="button" class="segment-opt" role="radio" aria-checked="false" data-value="sl" onclick="changeLanguage('sl')">Slovenščina</button>
-                        <button type="button" class="segment-opt" role="radio" aria-checked="false" data-value="en" onclick="changeLanguage('en')">English</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="setting-item">
+                <div class="setting-item" style="border-bottom: none;">
                     <span class="setting-label" data-i18n="wallpaper_editor">Wallpaper Editor</span>
                     <div class="setting-control">
                         <a href="wallpaper" class="btn btn-primary" style="text-decoration: none;">
@@ -88,6 +66,15 @@
 
             <div class="card">
                 <div class="setting-item">
+                    <label class="setting-label" id="font-size-label" data-i18n="font_size">Font Size</label>
+                    <div class="segment-control" id="font-control" role="radiogroup" aria-labelledby="font-size-label">
+                        <div class="segment-pill" aria-hidden="true"></div>
+                        <button type="button" class="segment-opt" role="radio" aria-checked="false" data-value="small" onclick="changeFontSize('small')" data-i18n="small">Small</button>
+                        <button type="button" class="segment-opt" role="radio" aria-checked="false" data-value="medium" onclick="changeFontSize('medium')" data-i18n="medium">Medium</button>
+                        <button type="button" class="segment-opt" role="radio" aria-checked="false" data-value="large" onclick="changeFontSize('large')" data-i18n="large">Large</button>
+                    </div>
+                </div>
+                <div class="setting-item">
                     <span class="setting-label" data-i18n="backup">Backup Data</span>
                     <div class="setting-control">
                         <button class="btn btn-primary" onclick="exportBackup()" data-i18n="download_backup">Download Backup</button>
@@ -98,6 +85,17 @@
                     <div class="setting-control">
                         <input type="file" id="restore-file" accept=".thinkel,.json" onchange="importBackup(this)">
                         <label for="restore-file" class="btn btn-secondary" data-i18n="restore">Restore Backup</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="setting-item" style="border-bottom: none;">
+                    <span class="setting-label">Bible Translation</span>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; text-align: right;">
+                        Berean Standard Bible (BSB) — public domain.
+                        Produced in cooperation with Bible Hub, Discovery Bible,
+                        OpenBible.com and the Berean Bible Translation Committee.
                     </div>
                 </div>
             </div>
@@ -126,7 +124,7 @@
         <span id="toast-message">Message</span>
     </div>
 
-    <script src="js/app.js?v=12"></script>
+    <script src="js/app.js?v=16"></script>
     <script>
         // Initialize settings page
         document.addEventListener('DOMContentLoaded', () => {
@@ -134,7 +132,6 @@
             updateTexts();
             requestAnimationFrame(() => {
                 updateControlUI('font-control', localStorage.getItem('fontSize') || 'medium');
-                updateControlUI('lang-control', (typeof resolveInitialLang === 'function') ? resolveInitialLang() : (localStorage.getItem('lang') || 'en'));
             });
         });
     </script>

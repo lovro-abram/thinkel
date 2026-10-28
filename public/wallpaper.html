@@ -11,22 +11,21 @@
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='4' width='27' height='27' rx='6' fill='%231CA85E'/%3E%3Crect x='5' y='1' width='27' height='27' rx='6' fill='%23FFFFFF' stroke='%2312291A' stroke-width='2'/%3E%3Ctext x='18' y='21' font-size='15' font-family='Arial Black,Arial,sans-serif' font-weight='900' text-anchor='middle' fill='%2312291A'%3ET%3C/text%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     
-    <title>Wallpaper Editor | Urejevalnik ozadij – Thinkel</title>
-    <meta name="description" content="Create your own quote wallpaper: choose aspect ratio (9:16 story, 9:19.5 phone, 16:9 desktop), font, color and text position. | Ustvarite lastno ozadje s citatom: izberite razmerje stranic (9:16 zgodba, 9:19.5 telefon, 16:9 namizje), pisavo, barvo in položaj besedila.">
+    <title>Wallpaper Editor – Thinkel</title>
+    <meta name="description" content="Create your own Bible verse wallpaper: choose aspect ratio (9:16 story, 9:19.5 phone, 16:9 desktop), font, color and text position.">
     <link rel="canonical" href="https://thinkel.labram.workers.dev/wallpaper">
 
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Thinkel">
     <meta property="og:url" content="https://thinkel.labram.workers.dev/wallpaper">
-    <meta property="og:title" content="Wallpaper Editor | Urejevalnik ozadij – Thinkel">
-    <meta property="og:description" content="Create your own quote wallpaper. | Ustvarite lastno ozadje s citatom.">
+    <meta property="og:title" content="Wallpaper Editor – Thinkel">
+    <meta property="og:description" content="Create your own Bible verse wallpaper.">
     <meta property="og:image" content="https://thinkel.labram.workers.dev/og-image.png">
     <meta property="og:locale" content="en_US">
-    <meta property="og:locale:alternate" content="sl_SI">
     
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;700&family=Montserrat:wght@400;600&family=Merriweather:wght@300;400;700&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=12">
+    <link rel="stylesheet" href="css/style.css?v=16">
     
     <style>
         :root {
@@ -931,33 +930,21 @@
     </div>
 
     <script>
-        // Fallback quotes data
-        const fallbackQuotes = {
-            sl: [
-                {"id": 1, "text": "Edini način, da narediš odlično delo, je, da imaš radi tisto, kar delaš.", "author": "Steve Jobs"},
-                {"id": 2, "text": "Bodi sprememba, ki jo želiš videti v svetu.", "author": "Mahatma Gandhi"},
-                {"id": 3, "text": "Vsaka pot se začne s prvim korakom.", "author": "Lao Tzu"}
-            ],
-            en: [
-                {"id": 1, "text": "The only way to do great work is to love what you do.", "author": "Steve Jobs"},
-                {"id": 2, "text": "Be the change you wish to see in the world.", "author": "Mahatma Gandhi"},
-                {"id": 3, "text": "Every journey begins with a single step.", "author": "Lao Tzu"}
-            ]
-        };
+        // Fallback Bible passages (same ids as data/bsb.bible.json)
+        const fallbackQuotes = [
+            {"id": 162, "text": "“Do not judge, or you will be judged.", "author": "Matthew 7:1"},
+            {"id": 1, "text": "So they hurried off and found Mary and Joseph and the Baby, who was lying in the manger.", "author": "Luke 2:16"},
+            {"id": 79, "text": "Jesus said to her, “I am the resurrection and the life. Whoever believes in Me will live, even though he dies.", "author": "John 11:25"}
+        ];
         
         let currentQuotes = [];
         let currentQuote = null;
-        // Language: saved choice wins, first visit auto-detects (v12 audit fix)
-        let currentLang = (function () {
-            const saved = localStorage.getItem('lang');
-            if (saved === 'sl' || saved === 'en') return saved;
-            const nav = (navigator.languages && navigator.languages[0]) || navigator.language || '';
-            return String(nav).toLowerCase().startsWith('sl') ? 'sl' : 'en';
-        })();
+        // English-only app
+        let currentLang = 'en';
         let recentColors = JSON.parse(localStorage.getItem('recentColors') || '[]');
         let marginsLocked = true;
         
-        // === WALLPAPER UI TRANSLATIONS (EN default, SL via Settings) ===
+        // === WALLPAPER UI TEXTS (English) ===
         const WPI18N = {
             en: {
                 wp_title: 'Wallpaper Editor',
@@ -979,27 +966,6 @@
                 toast_image_loaded: 'Image loaded ({w}\u00D7{h})',
                 toast_saved: 'Saved: {w}\u00D7{h}px',
                 toast_color: 'Color updated'
-            },
-            sl: {
-                wp_title: 'Urejevalnik ozadij',
-                wp_upload: 'Tapnite za nalaganje slike', wp_drag: 'ali povlecite in spustite', wp_change: 'Spremeni',
-                wp_ratio: 'Razmerje stranic',
-                wp_ratio_original: 'Izvorno', wp_ratio_story: '9:16 Zgodba', wp_ratio_phone: '9:19.5 Telefon', wp_ratio_desktop: '16:9 Namizje',
-                hint_original: 'Ohrani izvirno razmerje naložene slike.',
-                hint_export: 'Izvoz: {w} \u00D7 {h} px (slika se osredinsko obreže).',
-                wp_small: 'Majhna', wp_medium: 'Srednja', wp_large: 'Velika',
-                wp_align: 'Poravnava besedila', wp_left: 'Levo', wp_center: 'Sredina', wp_right: 'Desno',
-                wp_vertical: 'Vertikalni položaj', wp_top: 'Zgoraj', wp_bottom: 'Spodaj',
-                wp_lock: 'Zakleni robove skupaj', wp_left_margin: 'Levi rob', wp_right_margin: 'Desni rob',
-                wp_font: 'Slog pisave',
-                wp_f_classic: 'Klasična', wp_f_clean: 'Čista', wp_f_relaxed: 'Sproščena', wp_f_modern: 'Moderna', wp_f_elegant: 'Elegantna', wp_f_script: 'Rokopis',
-                wp_color: 'Barva besedila', wp_c_white: 'Bela', wp_c_black: 'Črna', wp_c_custom: 'Poljubna barva',
-                wp_save: 'Shrani ozadje',
-                wp_pick: 'Izberi barvo', wp_choose: 'Tapnite za izbiro barve', wp_recent: 'Nedavne barve', wp_done: 'Končano',
-                toast_saved_default: 'Ozadje shranjeno!',
-                toast_image_loaded: 'Slika naložena ({w}\u00D7{h})',
-                toast_saved: 'Shranjeno: {w}\u00D7{h}px',
-                toast_color: 'Barva posodobljena'
             }
         };
         
@@ -1008,12 +974,10 @@
             return dict[key] || WPI18N.en[key] || key;
         }
         
-        // Apply the active language to all static wallpaper UI elements
+        // Apply the English texts to all static wallpaper UI elements
         function applyWallpaperLanguage() {
-            document.title = currentLang === 'sl'
-                ? 'Urejevalnik ozadij – Thinkel'
-                : 'Wallpaper Editor – Thinkel';
-            document.documentElement.lang = currentLang === 'sl' ? 'sl' : 'en';   // screen-reader voice (v12)
+            document.title = 'Wallpaper Editor – Thinkel';
+            document.documentElement.lang = 'en';
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (wpT(key) !== key) el.textContent = wpT(key);
@@ -1102,29 +1066,61 @@
             }
         }
         
-        // Load daily quote
+        // Load daily passage (liturgical calendar first, date-hash fallback)
+        let liturgicalDays = null;
+        let calendarWrapYear = 2026;
+        async function loadCalendar() {
+            if (liturgicalDays) return;
+            try {
+                const response = await fetch('data/calendar.json', { cache: 'no-cache' });
+                if (!response.ok) throw new Error('Failed to load calendar');
+                const data = await response.json();
+                liturgicalDays = (data && data.days) ? data.days : {};
+                calendarWrapYear = (data && data.wrapYear) || 2026;
+            } catch (error) {
+                console.warn('calendar.json could not be loaded — using date-hash selection.', error);
+                liturgicalDays = {};
+            }
+        }
+
         async function loadDailyQuote() {
             try {
-                const fileName = currentLang === 'sl' ? 'data/sl.citati.json' : 'data/en.citati.json';
-                // cache: 'no-cache' => JSON edits on Neocities appear after a simple reload
+                const fileName = 'data/bsb.bible.json';
+                // cache: 'no-cache' => data updates appear after a simple reload
                 const response = await fetch(fileName, { cache: 'no-cache' });
                 if (!response.ok) throw new Error('Failed to load');
                 const data = await response.json();
-                currentQuotes = data.citati || data.quotes || [];
+                currentQuotes = data.passages || [];
             } catch (error) {
-                console.error(`Could not load quotes JSON (if this is a SyntaxError, the JSON file has a syntax mistake, e.g. a missing comma):`, error);
-                currentQuotes = fallbackQuotes[currentLang] || fallbackQuotes.en;
+                console.error(`Could not load passages JSON (if this is a SyntaxError, the JSON file has a syntax mistake, e.g. a missing comma):`, error);
+                currentQuotes = fallbackQuotes.slice();
             }
+            await loadCalendar();
             
             const today = new Date();
             const year = today.getFullYear();
             const month = today.getMonth();
             const day = today.getDate();
-            const seed = (year * 10000) + (month * 100) + day;
-            const index = seed % currentQuotes.length;
-            currentQuote = currentQuotes[index];
+            const pad = n => String(n).padStart(2, '0');
+            const dateKey = `${year}-${pad(month + 1)}-${pad(day)}`;
+            let quote = null;
+            if (liturgicalDays) {
+                let key = liturgicalDays[dateKey] ? dateKey : null;
+                if (!key) {
+                    let mm = pad(month + 1), dd = pad(day);
+                    if (mm === '02' && dd === '29') dd = '28';
+                    const wrapped = `${calendarWrapYear}-${mm}-${dd}`;
+                    if (wrapped !== dateKey && liturgicalDays[wrapped]) key = wrapped;
+                }
+                if (key) quote = currentQuotes.find(q => q.id === liturgicalDays[key]);
+            }
+            if (!quote) {
+                const seed = (year * 10000) + (month * 100) + day;
+                quote = currentQuotes[seed % currentQuotes.length];
+            }
+            currentQuote = quote;
             
-            settings.text = currentQuote.text || currentQuote.besedilo || "";
+            settings.text = currentQuote.text || "";
             
             if (currentImage) drawCanvas();
         }
@@ -1555,7 +1551,7 @@
         // Init
         document.addEventListener('DOMContentLoaded', () => {
             loadAppSettings(); // Apply font size and theme from settings
-            applyWallpaperLanguage(); // Apply UI language (EN default, follows Settings)
+            applyWallpaperLanguage(); // Apply English UI texts
             updateRecentColorsDisplay();
             loadDailyQuote();
         });

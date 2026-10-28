@@ -67,29 +67,5 @@
         <p id="nf-p">This page does not exist.</p>
         <a href="/" id="nf-btn">Back to Thinkel</a>
     </main>
-    <script>
-    /* Same language logic as the app (js/app.js resolveInitialLang):
-       saved choice > browser language. No switcher on this page. */
-    (function () {
-        'use strict';
-        var lang = 'en';
-        try {
-            var saved = localStorage.getItem('lang');
-            if (saved === 'sl' || saved === 'en') {
-                lang = saved;
-            } else {
-                var nav = (navigator.languages && navigator.languages[0]) || navigator.language || '';
-                lang = String(nav).toLowerCase().indexOf('sl') === 0 ? 'sl' : 'en';
-            }
-        } catch (e) { /* private mode / file:// — stay EN */ }
-        var t = lang === 'sl'
-            ? { h1: 'Stran ne obstaja', p: 'Stran, ki jo iščeš, ne obstaja.', btn: 'Nazaj na Thinkel' }
-            : { h1: 'Page not found', p: 'This page does not exist.', btn: 'Back to Thinkel' };
-        document.documentElement.lang = lang;
-        document.getElementById('nf-h1').textContent = t.h1;
-        document.getElementById('nf-p').textContent = t.p;
-        document.getElementById('nf-btn').textContent = t.btn;
-    })();
-    </script>
 </body>
 </html>

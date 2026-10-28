@@ -12,7 +12,7 @@
   Cross-Origin-Opener-Policy: same-origin
 
 # Static assets are cache-busted with ?v= so they can live in the browser cache.
-# HTML and /data/*.json keep the default revalidation (fresh quotes + deploys).
+# HTML and /data/*.json keep the default revalidation (fresh passages + deploys).
 /css/*
   Cache-Control: public, max-age=604800
 /js/*

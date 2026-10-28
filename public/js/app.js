@@ -1,26 +1,21 @@
 // === DATA ===
+// Bible passages (Gospel verses) in the Berean Standard Bible (BSB), a
+// public-domain English translation. Passage ids are shared with
+// data/bsb.bible.json and data/calendar.json.
 let currentQuotes = [];
-let fallbackQuotes = {
-    sl: [
-        {"id": 1, "text": "Ne moreš spremeniti nekoga. Lahko jih poskušaš razumeti, jih opazuješ in poslušaš. Ko jih razumeš, jim lahko pomagaš, da se spremenijo.", "author": "Neznan avtor"},
-        {"id": 2, "text": "Obstaja samo ena pot – sledi svojemu srcu.", "author": "Neznan avtor"},
-        {"id": 3, "text": "Pozorno opazuj ljudi. Opazil boš, če nekaj skrivajo. Ne glede na to, ali hočejo ali ne, bo njihovo vedenje to razkrilo.", "author": "Neznan avtor"},
-        {"id": 4, "text": "Ne nasprotuj brez razmišljanja idejam drugih. Poskušaj jih razumeti. Morda ti želijo pokazati nekaj, česar sam ne opažaš.", "author": "Neznan avtor"},
-        {"id": 5, "text": "Če opaziš, da ljudje delajo čudne stvari, jih ne sprašuj, kako so to naredili, ker ti ne bodo povedali. Namesto tega jih natančno opazuj – razlog za njihov uspeh je razviden iz njihovih dejanj.", "author": "Neznan avtor"}
-    ],
-    en: [
-        {"id": 1, "text": "You can't change someone. You can try to understand them, watch them, and listen to them. When you understand them, you can help them to change.", "author": "Anonymous"},
-        {"id": 2, "text": "There is only one way - follow your heart.", "author": "Anonymous"},
-        {"id": 3, "text": "Watch people carefully. You'll notice if someone is hiding something. Whether they want to or not, their behavior will give them away.", "author": "Anonymous"},
-        {"id": 4, "text": "Don't mindlessly resist other people's ideas. Try to understand them. Maybe they want to show you something that you don't notice yourself.", "author": "Anonymous"},
-        {"id": 5, "text": "If you notice people doing strange things, don't ask them how they did it because they won't tell you. Instead, observe them closely - the reason for their success is evident in their actions.", "author": "Anonymous"}
-    ]
-};
+// Offline fallback: real BSB passages (same ids), so even without the JSON
+// files the app shows Scripture, never invented text.
+let fallbackQuotes = [
+    {"id": 162, "text": "“Do not judge, or you will be judged.", "author": "Matthew 7:1", "source": "Berean Standard Bible"},
+    {"id": 258, "text": "For many are called, but few are chosen.”", "author": "Matthew 22:14", "source": "Berean Standard Bible"},
+    {"id": 60, "text": "The greatest among you shall be your servant.", "author": "Matthew 23:11", "source": "Berean Standard Bible"},
+    {"id": 1, "text": "So they hurried off and found Mary and Joseph and the Baby, who was lying in the manger.", "author": "Luke 2:16", "source": "Berean Standard Bible"},
+    {"id": 79, "text": "Jesus said to her, “I am the resurrection and the life. Whoever believes in Me will live, even though he dies.", "author": "John 11:25", "source": "Berean Standard Bible"}
+];
 
 // === STATE ===
 let currentQuote = {};
 let itemToDelete = null;
-let currentLang = 'en';
 let currentSavedTab = 'fav';
 let searchQuery = "";
 
@@ -31,104 +26,85 @@ const LONG_PRESS_DURATION = 500;
 
 // === TRANSLATIONS ===
 const translations = {
-    sl: {
-        nav_today: "Domov", nav_saved: "Shranjeno", nav_settings: "Nastavitve",
-        favorites: "Priljubljene", notes: "Zapiski",
-        no_fav: "Ni shranjenih citatov.", no_notes: "Ni zapisanih misli.",
-        settings: "Nastavitve", font_size: "Velikost pisave", language: "Jezik",
-        small: "Majhna", medium: "Srednja", large: "Velika",
-        backup: "Varnostna kopija", download_backup: "Prenesi backup", restore: "Obnovi iz backupa",
-        today: "Danes", quote_on_day: "Citat na dan",
-        my_thoughts: "Moje misli", save_close: "Shrani in zapri",
-        delete_confirm_title: "Izbriši citat?", delete_confirm_text: "Ali ste prepričani, da želite ta citat trajno odstraniti iz vaših priljubljenih?",
-        delete_note_title: "Izbriši zapisek?", delete_note_text: "Ali ste prepričani, da želite ta zapisek izbrisati?",
-        cancel: "Prekliči", delete_yes: "Da, izbriši",
-        share_quote: "Deli citat",
-        share_download: "Prenesi sliko", share_copy_text: "Kopiraj citat",
-        share_hint_download: "slika 9:16", share_hint_text: "besedilo + povezava",
-        share_note: "Slika je v formatu 9:16 — primerna za Instagram Story ali wallpaper. Na telefonu gumb Deli takoj odpre sistemsko okno za deljenje s sliko in citatom.",
-        copied: "Kopirano", added_fav: "Dodano med priljubljene", removed_fav: "Odstranjeno", removed_note: "Zapisek izbrisan.",
-        toast_backup_success: "Backup uspešno prenesen.", toast_restore_success: "Podatki uspešno obnovljeni.",
-        wallpaper_editor: "Urejevalnik ozadij", open_wallpaper: "Odpri urejevalnik",
-        pwa_install_title: "Prenesi aplikacijo", pwa_install_desc: "Uporabljajte Thinkel kjerkoli, tudi brez povezave.", pwa_install_btn: "Namesti",
-        empty_fav_title: "Ni še priljubljenih", no_results_sub: "Za iskani pojem ni zadetkov. Poskusite drugačno iskalno besedo.",
-        empty_notes_title: "Ni še zapisanih misli",
-        empty_cta: "Poglej današnji citat",
-        image_creating: "Ustvarjam sliko...", image_saved: "Slika shranjena (9:16)", image_failed: "Slike ni bilo mogoče ustvariti.",
-        quote_data_error: "Datoteke s citati ni bilo mogoče prebrati – prikazani so samo osnovni citati. Preverite JSON datoteko.",
-        invalid_backup: "Neveljavna datoteka backupa.",
-        aria_search: "Iskanje citatov in zapiskov", aria_note: "Tvoje misli o citatu"
-    },
     en: {
         nav_today: "Home", nav_saved: "Saved", nav_settings: "Settings",
         favorites: "Favorites", notes: "Notes",
-        no_fav: "No saved quotes.", no_notes: "No thoughts written.",
+        no_fav: "No saved passages.", no_notes: "No thoughts written.",
         settings: "Settings", font_size: "Font Size", language: "Language",
         small: "Small", medium: "Medium", large: "Large",
         backup: "Backup Data", download_backup: "Download Backup", restore: "Restore Backup",
-        today: "Today", quote_on_day: "Quote on this day",
+        today: "Today", quote_on_day: "Passage on this day",
         my_thoughts: "My Thoughts", save_close: "Save & Close",
-        delete_confirm_title: "Remove Favorite?", delete_confirm_text: "Are you sure you want to remove this quote from your favorites?",
+        delete_confirm_title: "Remove Favorite?", delete_confirm_text: "Are you sure you want to remove this passage from your favorites?",
         delete_note_title: "Delete Note?", delete_note_text: "Are you sure you want to delete this thought?",
         cancel: "Cancel", delete_yes: "Yes, Delete",
-        share_quote: "Share Quote",
-        share_download: "Download image", share_copy_text: "Copy quote",
+        share_quote: "Share Passage",
+        share_download: "Download image", share_copy_text: "Copy passage",
         share_hint_download: "9:16 image", share_hint_text: "text + link",
-        share_note: "The image is 9:16 — perfect for an Instagram story or wallpaper. On phones, the Share button opens the system share sheet right away, with the image and the quote.",
+        share_note: "The image is 9:16 — perfect for an Instagram story or wallpaper. On phones, the Share button opens the system share sheet right away, with the image and the passage.",
         copied: "Copied", added_fav: "Added to favorites", removed_fav: "Removed from favorites", removed_note: "Note deleted.",
         toast_backup_success: "Backup downloaded successfully.", toast_restore_success: "Data restored successfully.",
         wallpaper_editor: "Wallpaper Editor", open_wallpaper: "Open Editor",
         pwa_install_title: "Download App", pwa_install_desc: "Use Thinkel anywhere, even offline.", pwa_install_btn: "Install",
         empty_fav_title: "Nothing saved yet", no_results_sub: "No matches for your search. Try a different term.",
         empty_notes_title: "No thoughts yet",
-        empty_cta: "See today's quote",
+        empty_cta: "See today's passage",
         image_creating: "Creating image...", image_saved: "Image saved (9:16)", image_failed: "Could not create the image.",
-        quote_data_error: "Quote file could not be read – showing built-in quotes only. Please check the JSON file.",
+        quote_data_error: "Passage file could not be read – showing built-in passages only. Please check the JSON file.",
         invalid_backup: "Invalid backup file.",
-        aria_search: "Search quotes and notes", aria_note: "Your thoughts about the quote"
+        aria_search: "Search passages and notes", aria_note: "Your thoughts about the passage"
     }
 };
 
-// Load quotes from JSON files
-
-// Language resolution (v12): a saved choice always wins; on first visit the
-// browser language is auto-detected (sl → Slovenian, otherwise English) —
-// same behaviour as the labram landing page.
-function resolveInitialLang() {
-    const saved = localStorage.getItem('lang');
-    if (saved === 'sl' || saved === 'en') return saved;
-    const nav = (navigator.languages && navigator.languages[0]) || navigator.language || '';
-    return String(nav).toLowerCase().startsWith('sl') ? 'sl' : 'en';
+// === LITURGICAL CALENDAR ===
+// data/calendar.json: { from, to, wrapYear, days: { 'YYYY-MM-DD': passageId } }
+// — the daily Gospel passage of the general Slovenian lectionary (source:
+// hozana.si), covering 2026-01-01 .. 2027-01-31. Dates outside the range use
+// the same month/day of wrapYear (2026); days without an entry fall back to
+// the deterministic date-hash selection below.
+let liturgicalDays = null;
+let calendarWrapYear = 2026;
+async function loadCalendar() {
+    if (liturgicalDays) return;
+    try {
+        const response = await fetch('data/calendar.json', { cache: 'no-cache' });
+        if (!response.ok) throw new Error(`Could not load data/calendar.json`);
+        const data = await response.json();
+        liturgicalDays = (data && data.days) ? data.days : {};
+        calendarWrapYear = (data && data.wrapYear) || 2026;
+    } catch (error) {
+        console.warn('calendar.json could not be loaded — all dates will use the date-hash selection.', error);
+        liturgicalDays = {};
+    }
 }
 
 async function loadQuotes() {
     // Declared outside try so the catch block can reference fileName in its error message
-    const lang = resolveInitialLang();
-    currentLang = lang;
-    const fileName = lang === 'sl' ? 'data/sl.citati.json' : 'data/en.citati.json';
+    const fileName = 'data/bsb.bible.json';
     try {
-        // cache: 'no-cache' => browser always revalidates with the server,
-        // so JSON edits on Neocities appear after a simple reload (no hard-refresh needed)
+        // cache: 'no-cache' => the browser always revalidates with the server,
+        // so data updates appear after a simple reload (no hard-refresh needed)
         const response = await fetch(fileName, { cache: 'no-cache' });
         if (!response.ok) {
             throw new Error(`Could not load ${fileName}`);
         }
         
         const data = await response.json();
-        currentQuotes = data.citati || data.quotes || [];
+        const translationName = (data && data.translationName) || 'Berean Standard Bible';
+        currentQuotes = data.passages || [];
 
         // Basic migration if needed (ensuring all have 'text' and 'author');
         // preserves enrichment fields: category, tags, source, source_type, year
-        currentQuotes = currentQuotes.map(q => {
+        currentQuotes = currentQuotes.map(p => {
             return {
-                id: q.id,
-                text: q.text || q.besedilo || "",
-                author: q.author || (currentLang === 'sl' ? "Neznan avtor" : "Anonymous"),
-                category: q.category || null,
-                tags: Array.isArray(q.tags) ? q.tags : [],
-                source: q.source || null,
-                source_type: q.source_type || null,
-                year: q.year || null
+                id: p.id,
+                text: p.text || "",
+                author: p.ref || "",
+                category: 'gospel',
+                tags: p.book ? [p.book] : [],
+                source: translationName,
+                source_type: null,
+                year: null
             };
         });
 
@@ -137,7 +113,7 @@ async function loadQuotes() {
         console.error(`Could not load ${fileName}. If the error is a SyntaxError, the JSON file itself is invalid ` +
             `(usually a missing comma or an unescaped " inside a value). The app is now showing built-in fallback quotes:`, error);
         // Fallback to hardcoded quotes
-        currentQuotes = fallbackQuotes[currentLang] || fallbackQuotes.en;
+        currentQuotes = fallbackQuotes.slice();
         showToast(t('quote_data_error'));
         return currentQuotes;
     }
@@ -228,9 +204,7 @@ function editNoteDirect(id, btnElement) {
 // === SETTINGS ===
 function loadSettings() {
     const font = localStorage.getItem('fontSize') || 'medium';
-    const lang = resolveInitialLang();
     applyFontSize(font);
-    applyLanguage(lang);
 }
 
 function updateControlUI(controlId, activeValue) {
@@ -275,22 +249,8 @@ function applyFontSize(val) {
     }
 }
 
-async function changeLanguage(val) {
-    localStorage.setItem('lang', val);
-    await applyLanguage(val);
-    updateControlUI('lang-control', val);
-}
-
-async function applyLanguage(val) {
-    currentLang = val;
-    await loadQuotes();
-    updateTexts();
-    if (typeof loadDailyQuote === 'function') loadDailyQuote();
-    if (typeof renderSaved === 'function') renderSaved();
-}
-
 function updateTexts() {
-    const t = translations[currentLang];
+    const t = translations.en;
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (t[key]) el.textContent = t[key];
@@ -298,57 +258,46 @@ function updateTexts() {
     
     const searchInput = document.getElementById('search-input');
     if (searchInput) {
-        searchInput.placeholder = currentLang === 'sl' ? "Iskanje..." : "Search...";
+        searchInput.placeholder = "Search...";
         searchInput.setAttribute('aria-label', t.aria_search);
     }
     const noteArea = document.getElementById('modal-note-input');
     if (noteArea) noteArea.setAttribute('aria-label', t.aria_note);
 
-    // Screen readers must switch voice with the app language (v12 audit fix)
-    document.documentElement.lang = currentLang === 'sl' ? 'sl' : 'en';
+    document.documentElement.lang = 'en';
     
-    // Bilingual tab title, refined to the active language
+    // Tab title per page
     const page = document.body.getAttribute('data-page');
     const titles = {
-        home:    { sl: 'Thinkel – Dnevna inspiracija', en: 'Thinkel – Daily Inspiration' },
-        saved:   { sl: 'Shranjeno – Thinkel',          en: 'Saved – Thinkel' },
-        settings:{ sl: 'Nastavitve – Thinkel',         en: 'Settings – Thinkel' }
+        home:    'Thinkel – Daily Gospel Verse',
+        saved:   'Saved Passages – Thinkel',
+        settings:'Settings – Thinkel'
     };
     if (page && titles[page]) {
-        document.title = titles[page][currentLang] || titles[page].sl;
+        document.title = titles[page];
     }
 }
 
 function t(key) {
-    return translations[currentLang][key] || key;
+    return translations.en[key] || key;
 }
 
 // === ATTRIBUTION HELPERS ===
-// Builds the display line for a quote's origin:
-//  - real author or paraphrase ("po X" / "after X") -> shown as author
-//  - anonymous quote with a known source -> "iz filma X (2005)" / "from X (2005)"
-//  - otherwise -> Neznan avtor / Anonymous
+// Every passage shows its Bible reference ("- Luke 2:16"); the translation
+// name ("Berean Standard Bible") is rendered below it via getSourceNote().
 function isAnonymousAuthor(q) {
-    return !q || !q.author || q.author === 'Anonymous' || q.author === 'Neznan avtor';
+    return !q || !q.author || q.author === 'Anonymous';
 }
 
 function getAttribution(q, withDash) {
     if (!q) return '';
     const prefix = withDash ? '- ' : '';
     if (!isAnonymousAuthor(q)) return prefix + q.author;
-    if (q.source) {
-        if (currentLang === 'sl') {
-            const word = q.source_type === 'serija' ? 'iz serije'
-                       : (q.source_type === 'knjiga' ? 'iz knjige' : 'iz filma');
-            return prefix + word + ' ' + q.source + (q.year ? ` (${q.year})` : '');
-        }
-        return prefix + 'from ' + q.source + (q.year ? ` (${q.year})` : '');
-    }
-    return prefix + (currentLang === 'sl' ? 'Neznan avtor' : 'Anonymous');
+    return prefix + 'Anonymous';
 }
 
-// Small print under the author: original work title, shown when the quote is
-// attributed to a person ("po X") AND we know the source work.
+// Small print under the author: the translation name, shown for every passage
+// whose reference is displayed (i.e. always).
 function getSourceNote(q) {
     if (!q || !q.source || isAnonymousAuthor(q)) return '';
     return q.source + (q.year ? `, ${q.year}` : '');
@@ -462,9 +411,7 @@ function updateDateDisplay(dateObj) {
     if (!dateEl) return;
     
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const dateStr = dateObj.toLocaleDateString(currentLang === 'sl' ? 'sl-SI' : 'en-US', options);
-    const formattedStr = dateStr.charAt(0).toLowerCase() + dateStr.slice(1);
-    dateEl.textContent = formattedStr;
+    dateEl.textContent = dateObj.toLocaleDateString('en-US', options);
     
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -492,16 +439,36 @@ async function handleDateChange(dateString) {
     if (currentQuotes.length === 0) {
         await loadQuotes();
     }
+    await loadCalendar();
     
-    // Stable daily quote selection: use year, month and day to create a seed
     const year = chosenDate.getFullYear();
     const month = chosenDate.getMonth();
     const day = chosenDate.getDate();
 
-    // Simple hash function for date
-    const seed = (year * 10000) + (month * 100) + day;
-    const index = seed % currentQuotes.length;
-    currentQuote = currentQuotes[index];
+    // 1) Liturgical calendar first: the lectionary passage assigned to this date.
+    // 2) Dates outside the calendar range use the same month/day of the wrap
+    //    year (2026), e.g. 2027-03-05 -> 2026-03-05 (Feb 29 -> Feb 28).
+    // 3) Fallback: stable daily selection — a hash of year, month and day picks
+    //    from the passage pool, so every calendar day shows the same passage
+    //    for everyone.
+    const pad = n => String(n).padStart(2, '0');
+    const dateKey = `${year}-${pad(month + 1)}-${pad(day)}`;
+    let quote = null;
+    if (liturgicalDays) {
+        let key = liturgicalDays[dateKey] ? dateKey : null;
+        if (!key) {
+            let mm = pad(month + 1), dd = pad(day);
+            if (mm === '02' && dd === '29') dd = '28';
+            const wrapped = `${calendarWrapYear}-${mm}-${dd}`;
+            if (wrapped !== dateKey && liturgicalDays[wrapped]) key = wrapped;
+        }
+        if (key) quote = currentQuotes.find(q => q.id === liturgicalDays[key]);
+    }
+    if (!quote) {
+        const seed = (year * 10000) + (month * 100) + day;
+        quote = currentQuotes[seed % currentQuotes.length];
+    }
+    currentQuote = quote;
     
     const quoteTextEl = document.getElementById('daily-quote-text');
     const quoteAuthorEl = document.getElementById('daily-quote-author');
@@ -520,6 +487,7 @@ async function handleDateChange(dateString) {
 
 async function loadDailyQuote() {
     await loadQuotes();
+    await loadCalendar();
     // Local calendar date, NOT toISOString() (UTC) — in Slovenia between
     // 00:00–01:59 the UTC date is still "yesterday" (v12 audit fix).
     const today = new Date();
@@ -752,7 +720,7 @@ async function createQuoteImageFile() {
         x.fillText(getAttribution(currentQuote, true), W - m - 90, cb - 110);
 
         // Branding footer: black pill with cream text
-        const brand = currentLang === 'sl' ? 'THINKEL \u00B7 dnevna inspiracija' : 'THINKEL \u00B7 daily inspiration';
+        const brand = 'THINKEL \u00B7 daily gospel verse';
         x.font = '700 30px "Space Grotesk", sans-serif';
         const tw = x.measureText(brand).width;
         const pw = tw + 90, ph = 78, px = (W - pw) / 2, py = H - 220;
@@ -766,7 +734,8 @@ async function createQuoteImageFile() {
 
         const blob = await new Promise(res => c.toBlob(res, 'image/png'));
         if (!blob) throw new Error('toBlob failed');
-        return new File([blob], 'thinkel-citat.png', { type: 'image/png' });
+        const fileName = 'thinkel-passage.png';
+        return new File([blob], fileName, { type: 'image/png' });
     } catch (err) {
         console.error('createQuoteImageFile failed:', err);
         return null;
@@ -778,7 +747,7 @@ function downloadQuoteImage(file) {
     const url2 = URL.createObjectURL(file);
     const a = document.createElement('a');
     a.href = url2;
-    a.download = 'thinkel-citat-9x16.png';
+    a.download = 'thinkel-passage-9x16.png';
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -840,7 +809,7 @@ async function renderFavorites() {
         const subEl = emptyEl.querySelector('p');
         const ctaEl = emptyEl.querySelector('.btn');
         if (searchQuery && favorites.length > 0) {
-            if (titleEl) titleEl.textContent = currentLang === 'sl' ? "Ni zadetkov" : "No results";
+            if (titleEl) titleEl.textContent = "No results";
             if (subEl) subEl.textContent = t('no_results_sub');
             if (ctaEl) ctaEl.style.display = 'none';
         } else {
@@ -903,7 +872,7 @@ async function renderNotes() {
         const subEl = emptyEl.querySelector('p');
         const ctaEl = emptyEl.querySelector('.btn');
         if (searchQuery) {
-            if (titleEl) titleEl.textContent = currentLang === 'sl' ? "Ni zadetkov" : "No results";
+            if (titleEl) titleEl.textContent = "No results";
             if (subEl) subEl.textContent = t('no_results_sub');
             if (ctaEl) ctaEl.style.display = 'none';
         } else {

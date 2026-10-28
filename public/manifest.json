@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Thinkel – Daily Inspiration | Dnevna inspiracija",
+  "name": "Thinkel – Daily Gospel Verse",
   "short_name": "Thinkel",
-  "description": "A new thought-provoking quote every day, favorites, notes and a wallpaper editor. | Vsak dan nov citat za razmislek, priljubljeni citati, zapiski in urejevalnik ozadij.",
+  "description": "A Gospel verse every day, favorites, notes and a wallpaper editor. Free Bible web app and PWA.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -29,12 +29,12 @@
   ],
   "shortcuts": [
     {
-      "name": "Today's quote | Današnji citat",
+      "name": "Today's passage",
       "url": "./",
       "icons": [{ "src": "icons/icon-192x192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Saved | Shranjeno",
+      "name": "Saved",
       "url": "./saved",
       "icons": [{ "src": "icons/icon-192x192.png", "sizes": "192x192" }]
     }

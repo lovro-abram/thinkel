@@ -1,4 +1,4 @@
-const CACHE_NAME = 'thinkel-v14';
+const CACHE_NAME = 'thinkel-v17';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -9,8 +9,8 @@ const ASSETS_TO_CACHE = [
   './fonts/ArchivoBlack-Regular.ttf',
   './js/app.js',
   './manifest.json',
-  './data/sl.citati.json',
-  './data/en.citati.json',
+  './data/bsb.bible.json',
+  './data/calendar.json',
   './icons/icon-192x192.png',
   './icons/icon-512x512.png',
   './icons/icon-maskable-512x512.png',
